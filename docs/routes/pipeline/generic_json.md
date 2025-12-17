@@ -1,10 +1,41 @@
 ---
-title: Generic JSON Schema
+title: >
+    Generic JSON
+parent: Pipeline
 nav_order: 2
 ---
 
-# Generic JSON Schema
+# Generic JSON
 {: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+This mapper emits payloads that conform to [`mailwebhook.generic@1`](#schema-definition). Attachments stay out of the HTTP body and no URLs are embedded.
+
+## Shape
+
+- Top-level keys: `schema`, `event`, `message`, `body`, `meta`, optional `envelope`.
+- `schema`: `{ "name": "mailwebhook.generic", "version": "1" }`
+- `event`: `{ id, project_id, route_id, created_at }` (all strings; `created_at` is RFC3339 UTC, no fractional seconds).
+- `message`: includes `message_id`, `message_id_type` (`original|synthetic`), `subject`, `date`, people arrays (`from`, `to`, optional `reply_to|cc|bcc`), optional normalized `headers`.
+- `body`: `attachments` (required array) plus optional `text`/`html`.
+- `meta`: `source` (enum string), `raw_size_bytes`, `received_at` (RFC3339 UTC), optional `spam` (for hosted mailboxes only).
+- `envelope` (optional): `mail_from` and `rcpt_to` (unique, sorted).
+
+## Determinism rules enforced
+
+- People arrays are sorted by email; emails are lowercased and trimmed.
+- Attachments are sorted by `(filename, size)` and include `{id, filename, content_type, size, is_inline, content_id?, sha256?}`.
+- Headers are lowercased, unfolded, trimmed; duplicates are joined with `", "`. Empty values are dropped.
+- Times are UTC (`Z`), whole seconds.
+- Optional fields are omitted when empty.
+- Sorting/dedup behaviors above are enforced at runtime; JSON Schema cannot express ordering constraints (it enforces non-empty headers, unique attachments/rcpt_to).
+
+## Schema definition
 
 ```json
 {
@@ -32,7 +63,11 @@ nav_order: 2
         "id": { "type": "string", "minLength": 1 },
         "project_id": { "type": "string", "minLength": 1 },
         "route_id": { "type": "string", "minLength": 1 },
-        "created_at": { "type": "string", "format": "date-time" }
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+        }
       }
     },
     "message": {
@@ -43,7 +78,11 @@ nav_order: 2
         "message_id": { "type": "string", "minLength": 1 },
         "message_id_type": { "enum": ["original", "synthetic"] },
         "subject": { "type": "string" },
-        "date": { "type": "string", "format": "date-time" },
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+        },
         "from": { "$ref": "#/$defs/people" },
         "reply_to": { "$ref": "#/$defs/people" },
         "to": { "$ref": "#/$defs/people" },
@@ -52,7 +91,11 @@ nav_order: 2
         "headers": {
           "type": "object",
           "patternProperties": {
-            "^[a-z0-9_-]+$": { "type": "string" }
+            "^[a-z0-9_-]+$": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^\\S(.*\\S)?$"
+            }
           },
           "additionalProperties": false
         }
@@ -67,7 +110,8 @@ nav_order: 2
         "rcpt_to": {
           "type": "array",
           "items": { "type": "string", "format": "idn-email" },
-          "uniqueItems": true
+          "uniqueItems": true,
+          "minItems": 0
         }
       }
     },
@@ -80,7 +124,9 @@ nav_order: 2
         "html": { "type": "string" },
         "attachments": {
           "type": "array",
-          "items": { "$ref": "#/$defs/attachment" }
+          "items": { "$ref": "#/$defs/attachment" },
+          "uniqueItems": true,
+          "minItems": 0
         }
       }
     },
@@ -91,10 +137,15 @@ nav_order: 2
       "properties": {
         "source": { "enum": ["imap", "hosted", "api", "cli"] },
         "raw_size_bytes": { "type": "integer", "minimum": 0 },
-        "received_at": { "type": "string", "format": "date-time" },
+        "received_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+        },
         "spam": {
           "type": "object",
           "additionalProperties": false,
+          "minProperties": 1,
           "properties": {
             "flag": { "type": "boolean" },
             "score": { "type": "number" },
@@ -136,3 +187,9 @@ nav_order: 2
   }
 }
 ```
+
+## Example
+
+Find [example of default email] here.
+
+[example of default email]: {% link docs/routes/pipeline/generic_json/example.md %}
