@@ -27,6 +27,44 @@ Endpoints represent HTTP delivery targets that routes point to. They are project
   - `X-MailWebhook-Signature`: `t=<unix>, kid=<kid>, v1=<base64(hmac_sha256(t+"."+body, secret))>`.
   - `Idempotency-Key` is also included if the customer headers lack either variant.
 
+## Fetching attachments
+
+When the pipeline output includes attachments your backend can fetch them via pre-signed URLs. 
+
+Attachmnts are listed under `body.attachments` array in the generic JSON mapper output:
+
+```json
+    "attachments": [
+      {
+        "id": "9f5a1ded-538d-4f5f-a7a9-d3eacf9e58a0",
+        "filename": "5430524288.pdf",
+        "content_type": "application/pdf",
+        "size": 93259,
+        "is_inline": false,
+        "sha256": "059a0f5260487bbe663994de1fd641401fec76ac9f6bddfe5b53ae60d4bb2d86"
+      }
+    ]
+```
+
+To request pre-signed URL for an attachment make a `GET` request to: 
+```
+https://api.mailwebhook.dev/v1/messages/{message_id}/attachments/{attachment_id}/url
+```
+
+Do not forget to include `X-Api-Key` header with your project API key.
+The response will include a JSON object with `url`, `expires_at`, `method`, and `headers` fields:
+
+```json
+{
+  "url": "...",
+  "expires_at": "2025-12-15T14:26:19Z",
+  "method": "GET",
+  "headers": {}
+}
+```
+
+Send GET request to the provided `url` with optional `headers` before `expires_at` to fetch the attachment.
+
 ## Endpoint limitations
 
 - Allowed schemes: `http` or `https`.
