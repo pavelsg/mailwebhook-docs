@@ -71,7 +71,7 @@ https://app.mailwebhook.com/v1/messages/{message_id}/attachments/{attachment_id}
 ```
 
 {: .note }
-You should URL-encode `message_id`.
+You should URL-encode `message_id`. For example `<3F8E62B7-2BD6-4EC8-AD74-7B775CD0DE81@gmail.com>` becomes `%3C3F8E62B7-2BD6-4EC8-AD74-7B775CD0DE81%40gmail.com%3E`.
 
 Do not forget to include `X-Api-Key` header with your project API key.
 The response will include a JSON object with `url`, `expires_at`, `method`, and `headers` fields:
