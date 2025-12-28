@@ -31,6 +31,8 @@ Before matching, the inbound email is normalized into a dictionary:
   entry that contains a domain.
 - `headers`: map of header name unfolded string, with header names lowercased
   and missing values coerced to `""`.
+- `attachments_content_types`: list of lowercased MIME types for every persisted
+  attachment (e.g., `"image/png"`). Empty when there are no attachments.
 
 Every string comparison performed by the compiler lowercases both sides, so the
 rule JSON can use any casing. Leading/trailing whitespace is stripped by
@@ -52,6 +54,7 @@ objects mean “no constraint” for that field.
 | `from_domains` | `list[str]` | Exact match against any normalized sender domain. |
 | `headers_equals` | `dict[str,str]` | Header must exist and exactly equal the provided value (name comparison is case-insensitive). |
 | `headers_contains` | `dict[str,str]` | Header must include the provided substring. Useful for prefixes like `"x-priority": "high"`. |
+| `attachments_mime` | `list[str]` | Match attachment content types with glob patterns, enabling negation against */* for no‑attachment matching. |
 
 ## Boolean combinators
 
