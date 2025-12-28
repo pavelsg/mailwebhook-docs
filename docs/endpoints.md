@@ -67,7 +67,7 @@ Attachmnts are listed under `body.attachments` array in the generic JSON mapper 
 
 To request pre-signed URL for an attachment make a `GET` request to: 
 ```
-https://api.mailwebhook.dev/v1/messages/{message_id}/attachments/{attachment_id}/url
+https://app.mailwebhook.com/v1/messages/{message_id}/attachments/{attachment_id}/url
 ```
 
 {: .note }
