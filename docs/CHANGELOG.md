@@ -7,6 +7,13 @@ layout: default
 
 All notable user-facing changes to this project are documented in this file.
 
+## Release v0.10.2
+
+Features:
+* Added billing and paid plans
+* Added hosted mailbox support for paid plans
+* Added experimental GMail mailbox support
+
 ## Release v0.10.1
 
 Hi folks! This is initial MVP release of the MailWebhook.
