@@ -48,6 +48,8 @@ When setting up your endpoint, include this header in the Custom headers section
 
 ## Fetching attachments
 
+
+
 When the pipeline output includes attachments your backend can fetch them via pre-signed URLs. 
 
 Attachmnts are listed under `body.attachments` array in the generic JSON mapper output:
