@@ -27,7 +27,7 @@ The default step is `map.generic_json`, which emits the deterministic
 of the HTTP body and only their metadata is included, keeping delivery fast and
 reliable.
 
-For custom outputs, `map.custom_json_mapper` lets you define a JsonLogic-based
+For custom outputs, `map.custom_json` lets you define a JsonLogic-based
 mapper validated by JSON Schema, producing whatever JSON shape your downstream
 system expects. See [Custom JSON] for the mapper spec, supported operators, and
 runtime limits.

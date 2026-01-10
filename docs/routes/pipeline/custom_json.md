@@ -34,7 +34,7 @@ Using Rule & Pipeline (JSON):
   "pipeline": {
     "steps": [
       {
-        "name": "map.custom_json_mapper",
+        "name": "map.custom_json",
         "args": {
           mapper code here
         }
