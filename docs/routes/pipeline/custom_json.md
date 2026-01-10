@@ -28,15 +28,18 @@ Using Rule & Pipeline (JSON):
 
 ```json
 {
-  "rule": {
-    ...
-  },
   "pipeline": {
     "steps": [
       {
         "name": "map.custom_json",
         "args": {
-          mapper code here
+          "version": "v1",
+          "vars": [ 
+            // ordered list of variable definitions
+          ],
+          "output": { 
+            // desired shape for emitted JSON
+          }
         }
       }
     ]
@@ -126,12 +129,42 @@ Encoded as operator names under `call.*`. Arguments are named objects.
   * Returns: string
 * `call.extract.urls`
 
-  * Args: `{"text": string}` or `{"html": string}`
-  * Returns: array of `{"url": string, "context": string}`
+  Extracts URLs from the text or HTML. In HTML mode, extracts from href/src attributes and text content from the following tags: `<a>`, `<area>`, `<img>`, `<link>`, `<form>`, `<button>`, `<input>`, `<script>`, `<iframe>`, and `<source>`.
+
+  In text mode, if Markdown links are found (e.g., `[title](url)`), extracts both URL and title.
+
+    - Args are optional. Supported args:
+      - `mode`: `"html"` (default) or `"text"`.
+      - `html`: HTML string source (default: `message.html`).
+      - `text`: text string source (default: `message.text`).
+      - `deduplicate`: boolean to drop duplicate `(url,title,element)` entries (default: `False`).
+    - Mode selection:
+      - If `mode` is provided and valid, honor it.
+      - If only `text` is provided (no `html`), default to text mode.
+      - Otherwise default to HTML mode; if HTML parsing errors or yields zero results,
+        fall back to text mode.
+    - Output item shape:
+      - `{ "url": "<string>", "title": "<optional string>", "element": "<optional string>" }`
+
 * `call.extract.bullet_list`
 
-  * Args: `{"text": string}` or `{"html": string}`
-  * Returns: array of `{"text": string, "level": integer}`
+  Extracts bullet/numbered lists from HTML or text content. Tries to guess title from preceding text.
+
+  - Args are optional. Expected optional keys:
+    - `mode`: `"html"` (default) or `"text"`.
+    - `html`: HTML string source (default: `message.html`).
+    - `text`: text string source (default: `message.text`).
+    - `nested`: boolean to enable nested list extraction (default: `False`).
+    - `sanitize`: boolean to remove empty lines in text mode (default: `True`).
+    - `numbered`: boolean to include numbered lists (`<ol>` or `1.`/`1)`) (default: `True`).
+  - Source selection:
+    - Default source is `message.html`.
+    - In HTML mode: use `args.html` if provided, else `message.html`. If extraction yields zero results, fall back to text mode.
+    - In text mode: use `args.text` if provided, else `message.text`.
+  - Output shape:
+    - List objects: `{"title": "<optional>", "bullets": [<bullet>, ...]}`.
+    - Bullet objects: `{"text": "<item>", "child": <list|null>}` where `child` (if present)
+      uses the same list object shape and `title` equals the bullet `text`.
 
 Results are plain JSON and can be traversed with `var`. If you assign results to a var, reference as `{"var":"vars.urls[0].url"}`.
 
