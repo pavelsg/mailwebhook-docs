@@ -10,6 +10,11 @@ All notable user-facing changes to this project are documented in this file.
 ## Release v0.10.2
 
 Features:
+* Added 'Backfill' option to supported mailboxes.
+
+## Release v0.10.2
+
+Features:
 * Added billing and paid plans
 * Added hosted mailbox support for paid plans
 * Added experimental GMail mailbox support

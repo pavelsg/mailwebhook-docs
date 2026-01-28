@@ -96,6 +96,23 @@ see resulting JSON delivered to the [endpoint] linked to selected [route].
 {: .note }
 Limitation: no attachments are included in preview.
 
+## Message backfill
+
+Email backfill feature allows you to re-ingest email messages received before mailbox was added to MailWebhook.
+This feature is available through the "..." (Actions) menu for supported mailbox providers (IMAP and GMail).
+
+Backfill is available on all plans.
+
+Backfill process runs in the background and automatically pauses on error(s).
+
+You can check status of currently running backfill job through the same mailbox menu.
+
+Only 1 running backfill task is allowed.
+
+You plan level defines maximum number of days which could be backfilled.
+
+Backfilling process is idempotent and does not repeat eamils which already been delivered to registered webhooks.
+
 [Route]: {% link docs/routes.md %}
 [Endpoint]: {% link docs/endpoints.md %}
 [Rules]: {% link docs/routes/rules.md %}
