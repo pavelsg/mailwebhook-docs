@@ -98,20 +98,14 @@ Limitation: no attachments are included in preview.
 
 ## Message backfill
 
-Email backfill feature allows you to re-ingest email messages received before mailbox was added to MailWebhook.
-This feature is available through the "..." (Actions) menu for supported mailbox providers (IMAP and GMail).
+Backfill lets you re‑ingest email that arrived **before** you connected the mailbox to MailWebhook.
 
-Backfill is available on all plans.
-
-Backfill process runs in the background and automatically pauses on error(s).
-
-You can check status of currently running backfill job through the same mailbox menu.
-
-Only 1 running backfill task is allowed.
-
-You plan level defines maximum number of days which could be backfilled.
-
-Backfilling process is idempotent and does not repeat eamils which already been delivered to registered webhooks.
+- Where: open the mailbox "..." (Actions) menu for supported providers (IMAP, Gmail).
+- How: set the slider to the number of days you want to go back in time, hit "Start", done.
+- Behavior: jobs run in the background, pause automatically on errors, and are idempotent (already delivered emails are skipped).
+- Availability: included on all plans; one backfill job can run at a time.
+- Scope: your plan level caps how many days can be backfilled.
+- Monitoring: check the status from the same mailbox menu.
 
 [Route]: {% link docs/routes.md %}
 [Endpoint]: {% link docs/endpoints.md %}
