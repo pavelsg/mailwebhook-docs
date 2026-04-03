@@ -7,6 +7,17 @@ layout: default
 
 All notable user-facing changes to this project are documented in this file.
 
+## Product Update: March 2026
+
+Highlights:
+* Added native Gmail mailbox support
+* Added native Microsoft 365 mailbox support for Outlook 365 work mailboxes
+* Added temporary loopback mailboxes for onboarding and testing
+
+### Documentation
+
+* Updated mailbox documentation for Gmail, Microsoft 365, loopback, and OAuth fallback guidance
+
 ## Release v0.10.2
 
 Features:
@@ -17,7 +28,7 @@ Features:
 Features:
 * Added billing and paid plans
 * Added hosted mailbox support for paid plans
-* Added experimental GMail mailbox support
+* Added Gmail mailbox support
 
 ## Release v0.10.1
 

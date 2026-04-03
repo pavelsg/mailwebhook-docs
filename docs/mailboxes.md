@@ -14,7 +14,46 @@ nav_order: 1
 
 ---
 
-## Fully Supported Mailbox providers
+## Fully Supported Mailbox Providers
+
+### Gmail
+{: .d-inline-block }
+
+New March 2026
+{: .label .label-green }
+
+Configure Gmail mailbox:
+* `Connect with Google`: start OAuth2 authorization flow for Gmail or Google Workspace mailbox.
+* `Label` (optional): limit monitoring to messages with a specific Gmail label. If not set, MailWebhook watches the default mailbox scope configured by the integration.
+
+### Microsoft 365
+{: .d-inline-block }
+
+New March 2026
+{: .label .label-green }
+
+Configure Microsoft 365 mailbox:
+* `Connect with Microsoft 365`: start OAuth2 authorization flow for Microsoft 365 mailbox.
+* `Folder`: specify the mailbox folder to monitor.
+* `Shared mailbox email` (optional): specify shared mailbox address when the target mailbox is not the authenticated user's primary inbox.
+
+Microsoft 365 mailboxes include Outlook 365 work mailboxes used inside Microsoft 365 organizations.
+
+### Loopback
+{: .d-inline-block }
+
+New March 2026
+{: .label .label-green }
+
+{: .note }
+`loopback` is a temporary mailbox type for onboarding and testing.
+
+Loopback mailbox behavior:
+* MailWebhook creates the mailbox address automatically during onboarding.
+* Temporary address is ready to receive test emails immediately.
+* Loopback mailboxes are not intended for long-term production use.
+* Loopback mailboxes stay out of normal mailbox lists.
+* Loopback mailboxes do not count against normal mailbox limits.
 
 ### IMAP
 
@@ -54,33 +93,16 @@ Each hosted mailbox allows to define following settings:
     * `Quarantine threshold`: specify SPAM score threshold above which incoming emails will be marked as Quarantine. Those emails will still be evaluated against [routes], but not be delivered to the [endpoint]. You can review quarantined emails in the event log and process them manually using "Replay" feature.
 * **Maximum message size (bytes)**: specify maximum allowed size of incoming emails. Emails exceeding this size will be rejected without being evaluated against any [routes].
 
-## OAuth2 Mailboxes
+## Other OAuth Providers
 
-### Workarounds for OAuth2 providers
-
-If you need to connect to mailbox provided by OAuth2 provider (e.g., GMail, Office365), but MailWebhook does not support this provider natively, you can try following workarounds:
+If you need to connect a mailbox provided by an OAuth2-based email service that MailWebhook does not yet support natively, you can use one of the following workarounds:
 
 1. **Individual user**. As an individual user you have following options:
     1. Create "App Password" for your account in the provider's security settings to allow IMAP access using username and app password. Then use those credentials to connect mailbox using IMAP provider in MailWebhook.
     2. Create email forwarding rule in your email account settings to forward incoming emails to another mailbox which you can connect using IMAP provider in MailWebhook.
-    3. Add email forwading from your email account to [hosted mailbox](#hosted-mailbox) in MailWebhook. You will need to setup endpoint to receive verification email from the provider and confirm forwarding.
+    3. Add email forwarding from your email account to [hosted mailbox](#hosted-mailbox) in MailWebhook. You will need to set up an endpoint to receive the verification email from the provider and confirm forwarding.
 2. **Organization/Company**. In addition to options for individual users above, as an organization/company you have following additional option:
     1. Create email group/distribution list in your organization email system (e.g., Exchange, GSuite) and add hosted mailbox email address in MailWebhook as a member of that group/list. Incoming emails sent to that group/list will be delivered to hosted mailbox in MailWebhook.
-
-### Gmail
-{: .d-inline-block }
-
-New v.0.10.2
-{: .label .label-green }
-
-{: .warning }
-Experimental support only. Currently Google have not yet approved the app for production use, therefore you will get warning messages from Google when authenticating. **Connected mailboxes may require re-authentication every 14 days.**
-
-Access to an actual email messages requires `restricted` scope approval from Google. This comes with additional review process from Google, which may take several weeks. This process will involve 3rd-party security assessment which will incur additional costs. Whether MailWebhook project will proceed with this process depends on support from users. We do not currently have sufficient number of paying users to cover those costs, but you can sponsor this process  [here](https://buy.stripe.com/bJe14mcMk764148eRucMM00){:target="_blank"}.
-
-### Office365
-
-Coming soon.
 
 ## Message preview
 
