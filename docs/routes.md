@@ -30,6 +30,13 @@ Schema defines both [Rules] and a [Pipeline].
 
 Default schema pre-filled for new routes (see below). `map.generic_json` pipeline transforms email into default deterministic shape.
 
+Pipeline reminders:
+
+* `pipeline.steps` must contain at least one step.
+* Exactly one `map.*` step must exist.
+* The `map.*` step must be the final step.
+* Chat mappers use provider-specific destination arguments such as `channel` for Slack and `chat_id` for Telegram.
+
 ```json
 {
   "rule": {
