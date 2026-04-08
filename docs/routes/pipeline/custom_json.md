@@ -60,6 +60,8 @@ Use `{"var": "message.subject"}` etc. The evaluator provides:
 * Evaluate `vars` entries sequentially, top to bottom. Each entry has `name` and `expr`. Later vars can reference earlier ones using `{"var":"vars.some_name"}`.
 * Build `output` by recursively evaluating any JsonLogic expressions found in the template.
 * The environment seen by `var` includes `message`, `ctx`, `meta`, and `vars`.
+  Array helpers also add lexical scope bindings such as `item`, a custom `as`
+  alias, plus `current` and `accumulator` for `reduce`.
 * Only array form is supported for `vars`; each entry must include `name` and `expr`.
 * Ordering-sensitive behaviors (like array traversal) and runtime limits (depth, nodes, regex timeouts) are enforced by the evaluator.
 * Errors inside expressions yield `null` unless noted below. Hard failures abort with a mapper runtime error.
@@ -74,11 +76,12 @@ Use standard JsonLogic 2.0 semantics for these:
 
   * `{"var":"message.subject"}`
   * `{"var":"message.attachments[0].filename"}`
+  * Inside array helpers: `{"var":"bullet.text"}` or `{"var":"current.amount"}`
 * Strings and arrays:
 
   * `cat` (concatenate)
   * `substr` (start, length)
-  * `map`, `filter`, `reduce`, `some`, `all`, `none`
+  * `map`, `filter`, `find`, `reduce`, `some`, `all`, `none`
 * Objects:
 
   * `merge` (shallow object merge)
@@ -90,6 +93,11 @@ All extensions are prefixed to avoid collisions and are implemented as custom Js
 ### Path helpers
 
 * You can rely on `var` for traversal. Arrays support `[index]`. Dots split object keys.
+* Array helpers resolve local aliases before the root context, so `bullet.text`
+  reads from the current scoped item when `as: "bullet"` is active.
+* Custom `as` aliases must match `^[A-Za-z_][A-Za-z0-9_]*$` and must not shadow
+  reserved scope names: `message`, `ctx`, `meta`, `vars`, `current`,
+  `accumulator`.
 
 ### String helpers
 
@@ -168,6 +176,18 @@ Encoded as operator names under `call.*`. Arguments are named objects.
 
 Results are plain JSON and can be traversed with `var`. If you assign results to a var, reference as `{"var":"vars.urls[0].url"}`.
 
+Within array helpers, scoped aliases can also be traversed with `var`, for example:
+
+```json
+{
+  "map": {
+    "over": { "var": "vars.lists[0].bullets" },
+    "as": "bullet",
+    "do": { "var": "bullet.text" }
+  }
+}
+```
+
 ## Examples
 
 ### Conditionals with text extraction
@@ -232,6 +252,34 @@ Results are plain JSON and can be traversed with `var`. If you assign results to
 }
 ```
 
+### Project fields from array items
+
+```json
+{
+  "version": "v1",
+  "vars": [
+    {
+      "name": "lists",
+      "expr": {
+        "call.extract.bullet_list": {
+          "mode": "html",
+          "html": { "var": "message.html" }
+        }
+      }
+    }
+  ],
+  "output": {
+    "next_steps": {
+      "map": {
+        "over": { "var": "vars.lists[0].bullets" },
+        "as": "bullet",
+        "do": { "var": "bullet.text" }
+      }
+    }
+  }
+}
+```
+
 ## Runtime, limits, and error policy
 
 * Deterministic, pure evaluation. No IO except registered `call.*` functions.
@@ -243,6 +291,8 @@ Results are plain JSON and can be traversed with `var`. If you assign results to
   * Regex timeout: 50 ms per op (timeout raises a mapper error)
   * Function call timeout: 100 ms per call (timeout raises a mapper error)
 * Operator error returns `null`. Critical errors raise a mapper runtime error and stop execution.
+* Route-save validation also enforces semantic guardrails not expressed directly in
+  the raw JSON Schema, including invalid or reserved `as` aliases on array helpers.
 
 
 ## Schema definition
