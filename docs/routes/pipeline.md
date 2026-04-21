@@ -27,10 +27,10 @@ The default step is `map.generic_json`, which emits the deterministic
 of the HTTP body and only their metadata is included, keeping delivery fast and
 reliable.
 
-For custom outputs, `map.custom_json` lets you define a JsonLogic-based
-mapper validated by JSON Schema, producing whatever JSON shape your downstream
-system expects. See [Custom JSON] for the mapper spec, supported operators, and
-runtime limits.
+For custom outputs, `map.custom_json` lets you define a JsonLogic-style mapper
+validated by JSON Schema, producing whatever JSON shape your downstream system
+expects. See [Custom JSON] for the mapper contract and [JsonLogic-style DSL] for
+expression operators, helper calls, and runtime limits.
 
 Slack and Telegram use terminal chat mappers:
 
@@ -298,3 +298,4 @@ Useful optional arguments supported by both chat mappers:
 
 [Generic JSON]: {% link docs/routes/pipeline/generic_json.md %}
 [Custom JSON]: {% link docs/routes/pipeline/custom_json.md %}
+[JsonLogic-style DSL]: {% link docs/routes/pipeline/custom_json/dsl.md %}
