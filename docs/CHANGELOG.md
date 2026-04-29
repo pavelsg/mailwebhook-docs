@@ -7,6 +7,18 @@ layout: default
 
 All notable user-facing changes to this project are documented in this file.
 
+## Product Update: April 2026
+
+Highlights:
+* Added `extract.reply_segments` for [Custom JSON] routes to split new reply content from quoted history, forwarded content, and signatures.
+* Added `extract.key_value_pairs` for [Custom JSON] routes to extract structured fields from text or HTML into ordered `items`, first-value `values`, and duplicate-preserving `groups`.
+
+### Documentation
+
+* Added a dedicated [JsonLogic-style DSL] reference for Custom JSON operators, helper arguments, output shapes, and runtime limits.
+* Added [Custom JSON recipes] covering reply extraction, key/value field extraction, links, bullet lists, alerts, Slack payloads, and invoice metadata.
+* Expanded DSL examples for normalized key lookups, `values` versus `groups`, array helpers, string and regex helpers, and extractor workflows.
+
 ## Product Update: March 2026
 
 Highlights:
@@ -51,3 +63,5 @@ N/A
 Documentation site launched.
 
 [Custom JSON]: {% link docs/routes/pipeline/custom_json.md %}
+[JsonLogic-style DSL]: {% link docs/routes/pipeline/custom_json/dsl.md %}
+[Custom JSON recipes]: {% link docs/routes/pipeline/custom_json/recipes.md %}

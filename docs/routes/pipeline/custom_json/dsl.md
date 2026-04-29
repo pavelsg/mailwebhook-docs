@@ -112,6 +112,53 @@ Examples:
 }
 ```
 
+Common usage examples:
+
+```json
+{
+  "priority": {
+    "if": [
+      {
+        "or": [
+          {
+            "regex.match": {
+              "value": { "var": "message.subject" },
+              "pattern": "(?i)urgent|failure|down"
+            }
+          },
+          {
+            "in": [
+              { "var": "message.from[0].email" },
+              ["ceo@example.com", "ops@example.com"]
+            ]
+          }
+        ]
+      },
+      "high",
+      "normal"
+    ]
+  },
+  "summary": {
+    "cat": [
+      { "var": "message.subject" },
+      " from ",
+      { "var": "message.from[0].email" }
+    ]
+  },
+  "payload": {
+    "merge": [
+      { "source": "mailwebhook", "priority": "normal" },
+      { "priority": "high" },
+      { "subject": { "var": "message.subject" } }
+    ]
+  }
+}
+```
+
+Use `if` with `or`, `and`, comparisons, and `in` for classification. Use `cat`
+for small strings; `null` parts become empty strings. Use `merge` for shallow
+defaults where later objects override earlier objects.
+
 ## String helpers
 
 | Operator | Form | Result |
@@ -136,6 +183,68 @@ backreferences such as `"\\1"`, not JavaScript-style `$1`.
 
 Invalid regex patterns return `null`. Regex timeouts raise a mapper error and
 stop route delivery.
+
+String and regex examples:
+
+```json
+{
+  "version": "v1",
+  "vars": [
+    {
+      "name": "sender",
+      "expr": { "string.lower": { "var": "message.from[0].email" } }
+    },
+    {
+      "name": "sender_domain",
+      "expr": {
+        "regex.replace": {
+          "value": { "var": "vars.sender" },
+          "pattern": "^.*@([^>\\s]+)$",
+          "with": "\\1"
+        }
+      }
+    },
+    {
+      "name": "subject_parts",
+      "expr": {
+        "string.split": {
+          "value": { "var": "message.subject" },
+          "sep": ":"
+        }
+      }
+    }
+  ],
+  "output": {
+    "sender_domain": { "var": "vars.sender_domain" },
+    "subject_prefix": { "string.trim": { "var": "vars.subject_parts[0]" } },
+    "subject_detail": { "string.trim": { "var": "vars.subject_parts[1]" } },
+    "compact_subject": {
+      "regex.replace": {
+        "value": { "var": "message.subject" },
+        "pattern": "\\s+",
+        "with": " "
+      }
+    },
+    "tag_list": {
+      "string.join": {
+        "items": ["mail", { "var": "vars.sender_domain" }],
+        "sep": ", "
+      }
+    },
+    "safe_subject": {
+      "string.replace": {
+        "value": { "var": "message.subject" },
+        "find": "\"",
+        "with": "'"
+      }
+    }
+  }
+}
+```
+
+Use `string.replace` for exact substring replacement. Use `regex.replace` when
+you need pattern matching, whitespace compaction, or captured groups such as
+`"\\1"`.
 
 ## Array helpers
 
@@ -192,6 +301,68 @@ Reducer example:
   }
 }
 ```
+
+Workflow examples:
+
+```json
+{
+  "pdf_attachments": {
+    "filter": {
+      "over": { "var": "message.attachments" },
+      "as": "attachment",
+      "where": {
+        "==": [
+          { "var": "attachment.content_type" },
+          "application/pdf"
+        ]
+      }
+    }
+  },
+  "first_invoice_pdf": {
+    "find": {
+      "over": { "var": "message.attachments" },
+      "as": "attachment",
+      "where": {
+        "regex.match": {
+          "value": { "var": "attachment.filename" },
+          "pattern": "(?i)invoice.*\\.pdf$"
+        }
+      }
+    }
+  },
+  "has_large_attachment": {
+    "some": {
+      "over": { "var": "message.attachments" },
+      "as": "attachment",
+      "where": {
+        ">": [{ "var": "attachment.size" }, 10485760]
+      }
+    }
+  },
+  "all_attachments_hashed": {
+    "all": {
+      "over": { "var": "message.attachments" },
+      "as": "attachment",
+      "where": { "var": "attachment.sha256" }
+    }
+  },
+  "no_executables": {
+    "none": {
+      "over": { "var": "message.attachments" },
+      "as": "attachment",
+      "where": {
+        "regex.match": {
+          "value": { "var": "attachment.filename" },
+          "pattern": "(?i)\\.(exe|scr)$"
+        }
+      }
+    }
+  }
+}
+```
+
+Use `filter` when you need all matching items, `find` when only the first match
+matters, and `some`/`all`/`none` when the output should be a boolean.
 
 ## Scoped blocks
 
@@ -283,6 +454,32 @@ Arguments:
 
 Returns a string or `null`.
 
+Common pattern:
+
+```json
+{
+  "version": "v1",
+  "vars": [
+    {
+      "name": "text",
+      "expr": {
+        "call.transform.html_to_text": {
+          "html": { "var": "message.html" },
+          "text": { "var": "message.text" }
+        }
+      }
+    }
+  ],
+  "output": {
+    "subject": { "var": "message.subject" },
+    "snippet": { "substr": [{ "var": "vars.text" }, 0, 240] }
+  }
+}
+```
+
+Provide both `html` and `text` when possible. If `text` is present and truthy,
+it is returned directly; otherwise the helper converts `html`.
+
 ### `call.extract.urls`
 
 Extracts URLs from text or HTML. In HTML mode, it reads `href`, `src`,
@@ -309,6 +506,40 @@ Returns an array of objects:
   }
 ]
 ```
+
+Usage example:
+
+```json
+{
+  "version": "v1",
+  "vars": [
+    {
+      "name": "links",
+      "expr": {
+        "call.extract.urls": {
+          "html": { "var": "message.html" },
+          "text": { "var": "message.text" },
+          "deduplicate": true
+        }
+      }
+    }
+  ],
+  "output": {
+    "first_url": { "var": "vars.links[0].url" },
+    "first_label": { "var": "vars.links[0].title" },
+    "all_urls": {
+      "map": {
+        "over": { "var": "vars.links" },
+        "as": "link",
+        "do": { "var": "link.url" }
+      }
+    }
+  }
+}
+```
+
+HTML links may include `element`. Markdown links in text mode may include
+`title`. Bare text URLs usually return only `url`.
 
 ### `call.extract.bullet_list`
 
@@ -344,6 +575,41 @@ Returns an array of list objects:
   }
 ]
 ```
+
+Usage example:
+
+```json
+{
+  "version": "v1",
+  "vars": [
+    {
+      "name": "lists",
+      "expr": {
+        "call.extract.bullet_list": {
+          "html": { "var": "message.html" },
+          "text": { "var": "message.text" },
+          "nested": true,
+          "numbered": true
+        }
+      }
+    }
+  ],
+  "output": {
+    "first_item": { "var": "vars.lists[0].bullets[0].text" },
+    "first_item_children": { "var": "vars.lists[0].bullets[0].child.bullets" },
+    "flat_items": {
+      "map": {
+        "over": { "var": "vars.lists[0].bullets" },
+        "as": "bullet",
+        "do": { "var": "bullet.text" }
+      }
+    }
+  }
+}
+```
+
+Use `nested: true` when child bullets matter. Use `numbered: false` only when
+numbered lines should not be treated as list items.
 
 ### `call.extract.reply_segments`
 
@@ -396,6 +662,51 @@ Useful fields:
 * `segments[*].kind`
 * `segments[*].depth`
 * `segments[*].content`
+
+Usage example:
+
+```json
+{
+  "version": "v1",
+  "vars": [
+    {
+      "name": "reply_segments",
+      "expr": {
+        "call.extract.reply_segments": {
+          "sources": ["text"],
+          "split_quoted_by_depth": true,
+          "include_signature": true
+        }
+      }
+    }
+  ],
+  "output": {
+    "reply_text": { "var": "vars.reply_segments.text.reply_content" },
+    "has_quoted_content": { "var": "vars.reply_segments.text.has_quoted_content" },
+    "quoted_segments": {
+      "filter": {
+        "over": { "var": "vars.reply_segments.text.segments" },
+        "as": "segment",
+        "where": {
+          "==": [{ "var": "segment.kind" }, "quoted_content"]
+        }
+      }
+    },
+    "signature": {
+      "find": {
+        "over": { "var": "vars.reply_segments.text.segments" },
+        "as": "segment",
+        "where": {
+          "==": [{ "var": "segment.kind" }, "signature"]
+        }
+      }
+    }
+  }
+}
+```
+
+Segment `kind` values include `reply_content`, `quoted_header`,
+`quoted_content`, `forwarded_header`, `forwarded_content`, and `signature`.
 
 ### `call.extract.key_value_pairs`
 
