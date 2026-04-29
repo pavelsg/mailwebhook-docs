@@ -28,15 +28,18 @@ MailWebhook operates on 3 core concepts:
 [Mailboxes] are polled at pre-defined intervals. All ingested emails are pushed to all [Routes]. [Routes] do the matching, transform matched emails and deliver those to connected webhook [Endpoints].
 
 ```mermaid
-graph TD;
-    accTitle: Conceptual diagram
-    accDescr: a graph with four nodes: A points to B and C, while B and C both point to D
-    Mailbox1-->Route1;
-    Mailbox1-->Route2;
-    Mailbox2-->Route1;
-    Mailbox2-->Route2;
-    Route1-->Endpoint1;
-    Route2-->Endpoint2;
+flowchart TD
+    A[Inbound email] --> B[Normalize message fields]
+    B --> C[Route rules]
+    C -->|match| D[Pipeline steps]
+    D --> E[Optional html_to_text]
+    D --> F[Optional extract.urls]
+    D --> G[map.generic_json or map.custom_json]
+    G --> H[Attachment metadata in payload]
+    H --> I[Pre-signed attachment fetch API]
+    G --> J[Signed webhook delivery]
+    J --> K[Retries with backoff]
+    J --> L[Event inspector and replay]
 ```
 
 ### 1. Connect the mailbox.
