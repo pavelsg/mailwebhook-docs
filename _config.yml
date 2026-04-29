@@ -16,7 +16,7 @@
 title: MailWebhook
 description: MailWebhook Documentation
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://just-the-docs.com" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://docs.mailwebhook.com" # the base hostname & protocol for your site, e.g. http://example.com
 repository: pavelsg/just-the-docs # for github-metadata
 
 favicon_ico: /assets/images/mailwebhook_logo_32x32.png
