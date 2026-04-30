@@ -27,6 +27,10 @@ The default step is `map.generic_json`, which emits the deterministic
 of the HTTP body and only their metadata is included, keeping delivery fast and
 reliable.
 
+Optional transform steps can run before the terminal `map.*` step to normalize
+HTML, redact fields, rewrite values, or drop attachments before the payload is
+mapped. See [Transform Steps] for the full argument reference.
+
 For custom outputs, `map.custom_json` lets you define a JsonLogic-style mapper
 validated by JSON Schema, producing whatever JSON shape your downstream system
 expects. See [Custom JSON] for the mapper contract and [JsonLogic-style DSL] for
@@ -60,6 +64,19 @@ Useful optional arguments supported by both chat mappers:
 * `max_chars`
 * `include_from`
 * `prefix`
+
+## Built-In Transform Steps
+
+These non-terminal steps can run before the final mapper:
+
+| Step | Use it for |
+|------|------------|
+| `html_to_text` | Convert message HTML into deterministic plain text. |
+| `remove_fields` | Remove or clear selected message fields before mapping. |
+| `replace_values` | Set subject, body, or header values from literals or small templates. |
+| `strip_attachments_if` | Remove attachments that match configured MIME, size, and filename conditions. |
+
+See [Transform Steps] for arguments, supported field paths, and examples.
 
 ## Slack Simple
 
@@ -297,5 +314,6 @@ Useful optional arguments supported by both chat mappers:
 ```
 
 [Generic JSON]: {% link docs/routes/pipeline/generic_json.md %}
+[Transform Steps]: {% link docs/routes/pipeline/transform_steps.md %}
 [Custom JSON]: {% link docs/routes/pipeline/custom_json.md %}
 [JsonLogic-style DSL]: {% link docs/routes/pipeline/custom_json/dsl.md %}

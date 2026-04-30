@@ -440,6 +440,7 @@ Allowed helpers:
 * `extract.bullet_list`
 * `extract.reply_segments`
 * `extract.key_value_pairs`
+* `extract.tables`
 
 Unknown helper names are rejected.
 
@@ -820,6 +821,201 @@ HTML extraction rules:
 * HTML-to-text fallback handles separator lines after structural extraction.
 * Generic adjacent block pairing requires `allow_html_adjacent_blocks: true`.
 
+### `call.extract.tables`
+
+Extracts structured tables from message body text or HTML. Use this helper when
+downstream config needs stable cell lookup by normalized row and column headers,
+or when it needs to iterate over rows and columns without parsing table text.
+
+Arguments:
+
+| Arg | Default | Description |
+|-----|---------|-------------|
+| `mode` | `"auto"` | `"auto"`, `"html"`, or `"text"`. Auto considers HTML tables first, then text tables. |
+| `html` | `message.html` | HTML source. |
+| `text` | `message.text` | Text source. |
+| `header_mode` | `"auto"` | `"auto"`, `"first_row"`, `"first_column"`, `"both"`, or `"none"`. |
+| `include_html_grids` | `false` | Enable opt-in non-`<table>` HTML grid extraction. |
+| `html_grid_mode` | `"strict"` | `"strict"`, `"off"`, or `"lenient"` for smart HTML grids. |
+| `min_rows` | `2` | Minimum accepted table row count. |
+| `min_columns` | `2` | Minimum accepted table column count. |
+| `min_grid_confidence` | `0.75` | Minimum confidence for smart HTML grids. |
+| `max_tables` | `20` | Maximum returned tables. |
+| `max_rows` | `500` | Maximum rows retained per table. |
+| `max_columns` | `50` | Maximum columns retained per table. |
+| `deduplicate` | `true` | Drop duplicate table matrices. |
+
+Returns, abridged:
+
+```json
+{
+  "tables": [
+    {
+      "index": 0,
+      "source": "text_tsv",
+      "caption": null,
+      "confidence": 1.0,
+      "row_count": 3,
+      "column_count": 3,
+      "header_strategy": "both",
+      "col_headers": [
+        { "index": 1, "text": "Qty", "normalized": "qty", "lookup_key": "qty" },
+        { "index": 2, "text": "Total", "normalized": "total", "lookup_key": "total" }
+      ],
+      "row_headers": [
+        { "index": 1, "text": "Widget", "normalized": "widget", "lookup_key": "widget" }
+      ],
+      "header_candidates": {
+        "first_row": [
+          { "index": 0, "text": "Item", "normalized": "item", "lookup_key": "item" }
+        ],
+        "first_column": [
+          { "index": 0, "text": "Item", "normalized": "item", "lookup_key": "item" }
+        ]
+      },
+      "rows": [
+        {
+          "index": 1,
+          "lookup_key": "widget",
+          "values": { "qty": "2", "total": "$10.00" },
+          "cells": [
+            {
+              "row_index": 1,
+              "column_index": 1,
+              "row_lookup_key": "widget",
+              "column_lookup_key": "qty",
+              "value": "2",
+              "row_span": 1,
+              "col_span": 1,
+              "span_origin": null,
+              "is_span_origin": true
+            }
+          ]
+        }
+      ],
+      "cols": [
+        {
+          "index": 1,
+          "lookup_key": "qty",
+          "values": { "widget": "2" },
+          "cells": [
+            {
+              "row_index": 1,
+              "column_index": 1,
+              "row_lookup_key": "widget",
+              "column_lookup_key": "qty",
+              "value": "2",
+              "row_span": 1,
+              "col_span": 1,
+              "span_origin": null,
+              "is_span_origin": true
+            }
+          ]
+        }
+      ],
+      "lookup": {
+        "by_row": {
+          "widget": { "qty": "2", "total": "$10.00" }
+        },
+        "by_column": {
+          "qty": { "widget": "2" },
+          "total": { "widget": "$10.00" }
+        }
+      },
+      "matrix": [
+        ["Item", "Qty", "Total"],
+        ["Widget", "2", "$10.00"],
+        ["Gadget", "3", "$15.00"]
+      ],
+      "detection": {
+        "reason": "text_tsv",
+        "selector_hint": null,
+        "details": {}
+      }
+    }
+  ],
+  "summary": { "table_count": 1 }
+}
+```
+
+Supported `source` values:
+
+* `text_tsv`: tab-delimited body text.
+* `text_pipe`: Markdown-style pipe tables.
+* `text_ascii`: boxed ASCII tables.
+* `html_table`: native HTML `<table>` markup.
+* `html_aria_table`: opt-in ARIA `role="table"` or `role="grid"` structures.
+* `html_css_table`: opt-in inline CSS `display: table` structures.
+* `html_repeated_grid`: opt-in repeated row-like HTML blocks.
+* `html_label_grid`: opt-in repeated label/value card grids.
+
+Useful fields:
+
+* `tables[0].lookup.by_row.<row_key>.<column_key>` for direct row-oriented lookup.
+* `tables[0].lookup.by_column.<column_key>.<row_key>` for direct column-oriented lookup.
+* `tables[0].rows` for `map`, `filter`, `find`, and `reduce` over data rows.
+* `tables[0].cols` for `map`, `filter`, `find`, and `reduce` over data columns.
+* `tables[0].rows[*].values.<column_key>` and `tables[0].cols[*].values.<row_key>` for axis-local cell values.
+* `tables[0].rows[*].cells[*]` and `tables[0].cols[*].cells[*]` for cells with both lookup keys and span metadata.
+* `tables[0].matrix` for the rectangular text-only visual matrix.
+* `summary.table_count` for whether extraction found any tables.
+
+Usage example:
+
+```json
+{
+  "version": "v1",
+  "vars": [
+    {
+      "name": "tables",
+      "expr": {
+        "call.extract.tables": {
+          "mode": "auto"
+        }
+      }
+    }
+  ],
+  "output": {
+    "widget_qty": {
+      "var": "vars.tables.tables[0].lookup.by_row.widget.qty"
+    },
+    "gadget_total": {
+      "var": "vars.tables.tables[0].lookup.by_column.total.gadget"
+    },
+    "row_totals": {
+      "map": {
+        "over": { "var": "vars.tables.tables[0].rows" },
+        "as": "row",
+        "do": {
+          "item": { "var": "row.lookup_key" },
+          "total": { "var": "row.values.total" }
+        }
+      }
+    },
+    "matrix": { "var": "vars.tables.tables[0].matrix" }
+  }
+}
+```
+
+Header and lookup rules:
+
+* Header keys are trimmed, entity-decoded, zero-width-stripped, case-folded, and normalized by replacing whitespace, punctuation, and symbol runs with `_`.
+* Duplicate normalized keys receive stable suffixes such as `total`, `total_2`, and `total_3`.
+* Empty headers use synthetic `row_N` or `column_N` fallback keys.
+* Headers that start with a digit are prefixed with their axis, for example `row_2026` or `column_2026`.
+* `header_candidates.first_row` and `header_candidates.first_column` are populated for inspection even when the resolved `header_strategy` is `"none"`.
+
+Table extraction rules:
+
+* In `"auto"` mode, HTML-derived tables are considered before text tables.
+* When HTML and text contain the same table, deduplication keeps the first accepted table, normally the HTML-derived one.
+* Smart non-`<table>` HTML grids are disabled by default and require `include_html_grids: true`.
+* Use `"lenient"` grid mode only for known sender templates where strict mode misses valid grids.
+* Returned cell values are text-only. Raw HTML is never returned.
+* Native HTML `rowspan` and `colspan` values are expanded into the visual matrix. Each affected cell carries `row_span`, `col_span`, `span_origin`, and `is_span_origin` metadata.
+* There is no top-level flattened `cells` array in `v1`; use `rows[*].cells`, `cols[*].cells`, or `lookup`.
+* Layout tables, navigation/link groups, hidden/script/style/head content, and low-confidence grids are rejected by safety heuristics.
+
 ## Runtime limits and errors
 
 The DSL is deterministic and does not perform network IO. Helper calls are
@@ -830,7 +1026,7 @@ Runtime limits:
 * Maximum expression depth: `50`
 * Maximum nodes evaluated: `10,000`
 * Regex timeout: about `50 ms` per operation
-* `transform.html_to_text`, `extract.urls`, `extract.bullet_list`, and `extract.key_value_pairs`: about `200 ms` per helper call
+* `transform.html_to_text`, `extract.urls`, `extract.bullet_list`, `extract.key_value_pairs`, and `extract.tables`: about `200 ms` per helper call
 * `extract.reply_segments`: bounded by reply-segmentation runtime guardrails
 
 Most operator-level failures return `null`. Hard guard failures raise a mapper

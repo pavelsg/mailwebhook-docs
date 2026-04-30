@@ -23,7 +23,7 @@ This mapper emits payloads that conform to [`mailwebhook.generic@1`](#schema-def
 - `event`: `{ id, project_id, route_id, created_at }` (all strings; `created_at` is RFC3339 UTC, no fractional seconds).
 - `message`: includes `message_id`, `message_id_type` (`original|synthetic`), `subject`, `date`, people arrays (`from`, `to`, optional `reply_to|cc|bcc`), optional normalized `headers`.
 - `body`: `attachments` (required array) plus optional `text`/`html`.
-- `meta`: `source` (enum string), `raw_size_bytes`, `received_at` (RFC3339 UTC), optional `spam` (for hosted mailboxes only).
+- `meta`: `source` (`imap|gmail|hosted|ms365|api|cli`), `raw_size_bytes`, `received_at` (RFC3339 UTC), optional `spam` (for hosted mailboxes only).
 - `envelope` (optional): `mail_from` and `rcpt_to` (unique, sorted).
 
 ## Determinism rules enforced
@@ -135,7 +135,7 @@ This mapper emits payloads that conform to [`mailwebhook.generic@1`](#schema-def
       "additionalProperties": false,
       "required": ["source", "raw_size_bytes", "received_at"],
       "properties": {
-        "source": { "enum": ["imap", "hosted", "api", "cli"] },
+        "source": { "enum": ["imap", "gmail", "hosted", "ms365", "api", "cli"] },
         "raw_size_bytes": { "type": "integer", "minimum": 0 },
         "received_at": {
           "type": "string",

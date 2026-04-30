@@ -137,6 +137,7 @@ operators:
 | `call.extract.bullet_list` | Extract bullet and numbered lists from HTML or text. |
 | `call.extract.reply_segments` | Split replies from quoted content, forwarded content, and signatures. |
 | `call.extract.key_value_pairs` | Extract conservative key/value fields from text or HTML. |
+| `call.extract.tables` | Extract structured tables from text, native HTML tables, or opt-in HTML grids. |
 
 Helpers can be called in either form:
 
@@ -280,6 +281,45 @@ See [function calls] in the DSL reference for helper arguments and output shapes
 }
 ```
 
+### Table extraction
+
+```json
+{
+  "version": "v1",
+  "vars": [
+    {
+      "name": "tables",
+      "expr": {
+        "call.extract.tables": {
+          "mode": "auto"
+        }
+      }
+    }
+  ],
+  "output": {
+    "subject": { "var": "message.subject" },
+    "table_count": { "var": "vars.tables.summary.table_count" },
+    "widget_qty": {
+      "var": "vars.tables.tables[0].lookup.by_row.widget.qty"
+    },
+    "row_totals": {
+      "map": {
+        "over": { "var": "vars.tables.tables[0].rows" },
+        "as": "row",
+        "do": {
+          "item": { "var": "row.lookup_key" },
+          "total": { "var": "row.values.total" }
+        }
+      }
+    }
+  }
+}
+```
+
+`extract.tables` returns a `tables` array plus `summary.table_count`. Each table
+includes normalized row and column headers, row-oriented and column-oriented
+lookup maps, iterable `rows` and `cols`, and the rectangular text-only `matrix`.
+
 ## Validation and limits
 
 The mapper config is validated when the route is saved and again before mapper
@@ -291,7 +331,7 @@ Runtime limits:
 * Max expression depth: `50`
 * Max nodes evaluated: `10,000` per mapper
 * Regex timeout: about `50 ms` per regex operation
-* `transform.html_to_text`, `extract.urls`, `extract.bullet_list`, and `extract.key_value_pairs`: about `200 ms` per helper call
+* `transform.html_to_text`, `extract.urls`, `extract.bullet_list`, `extract.key_value_pairs`, and `extract.tables`: about `200 ms` per helper call
 * `extract.reply_segments`: bounded by dedicated reply-segmentation runtime guardrails
 
 Most operator-level failures return `null`. Hard guard failures, such as timeout

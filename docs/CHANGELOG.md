@@ -12,12 +12,13 @@ All notable user-facing changes to this project are documented in this file.
 Highlights:
 * Added `extract.reply_segments` for [Custom JSON] routes to split new reply content from quoted history, forwarded content, and signatures.
 * Added `extract.key_value_pairs` for [Custom JSON] routes to extract structured fields from text or HTML into ordered `items`, first-value `values`, and duplicate-preserving `groups`.
+* Documented `extract.tables` for [Custom JSON] routes, including normalized row and column lookups.
 
 ### Documentation
 
 * Added a dedicated [JsonLogic-style DSL] reference for Custom JSON operators, helper arguments, output shapes, and runtime limits.
-* Added [Custom JSON recipes] covering reply extraction, key/value field extraction, links, bullet lists, alerts, Slack payloads, and invoice metadata.
-* Expanded DSL examples for normalized key lookups, `values` versus `groups`, array helpers, string and regex helpers, and extractor workflows.
+* Added [Custom JSON recipes] covering reply extraction, key/value field extraction, table cell extraction, links, bullet lists, alerts, Slack payloads, and invoice metadata.
+* Expanded pipeline and DSL examples for transform steps, normalized key lookups, `values` versus `groups`, table row and column lookups, array helpers, string and regex helpers, and extractor workflows.
 
 ## Product Update: March 2026
 

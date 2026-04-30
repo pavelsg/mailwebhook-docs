@@ -200,6 +200,81 @@ Notes:
 * HTML keys and values are always returned as text only.
 * Separators must be single characters. The defaults are `:` and `=`.
 
+## Extract table cells by row and column
+
+Use when: emails contain order, invoice, inventory, or status tables that should
+become stable webhook fields without parsing table text yourself.
+
+Config:
+
+```json
+{
+  "version": "v1",
+  "vars": [
+    {
+      "name": "tables",
+      "expr": {
+        "call.extract.tables": {
+          "mode": "auto"
+        }
+      }
+    }
+  ],
+  "output": {
+    "subject": { "var": "message.subject" },
+    "table_count": { "var": "vars.tables.summary.table_count" },
+    "widget_qty": {
+      "var": "vars.tables.tables[0].lookup.by_row.widget.qty"
+    },
+    "gadget_total": {
+      "var": "vars.tables.tables[0].lookup.by_column.total.gadget"
+    },
+    "row_totals": {
+      "map": {
+        "over": { "var": "vars.tables.tables[0].rows" },
+        "as": "row",
+        "do": {
+          "item": { "var": "row.lookup_key" },
+          "total": { "var": "row.values.total" }
+        }
+      }
+    },
+    "source": { "var": "vars.tables.tables[0].source" }
+  }
+}
+```
+
+Emits:
+
+```json
+{
+  "subject": "Order summary",
+  "table_count": 1,
+  "widget_qty": "2",
+  "gadget_total": "$15.00",
+  "row_totals": [
+    {
+      "item": "widget",
+      "total": "$10.00"
+    },
+    {
+      "item": "gadget",
+      "total": "$15.00"
+    }
+  ],
+  "source": "html_table"
+}
+```
+
+Notes:
+
+* Use `lookup.by_row.<row_key>.<column_key>` for direct cell access.
+* Use `lookup.by_column.<column_key>.<row_key>` when the column is the primary lookup dimension.
+* Use `rows` and `cols` with `map`, `filter`, or `find` for repeated data.
+* Header keys are normalized, so `Order Total` becomes `order_total`; duplicate headers get suffixes such as `total_2`.
+* Set `include_html_grids: true` for known senders that use ARIA or CSS table-like grids instead of native `<table>` markup.
+* Returned cell values are text-only. Raw HTML is not returned.
+
 ## Turn a bullet list into tasks
 
 Use when: an email contains a checklist or next-steps list that should become structured task objects.
