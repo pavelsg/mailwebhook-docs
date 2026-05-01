@@ -44,7 +44,7 @@ flowchart TD
 
 ### 1. Connect the mailbox.
 
-From Dashboard or [Mailboxes] screens click "+Add Mailbox" button. Only IMAP connector is supported for now, Gmail and Outlook365 is on the way.
+From Dashboard or [Mailboxes] screens click "+Add Mailbox" button. IMAP, Gmail and Outlook365 connectors are supported for now.
 
 ### 2. Connect endpoint
 
