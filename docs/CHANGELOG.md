@@ -7,6 +7,16 @@ layout: default
 
 All notable user-facing changes to this project are documented in this file.
 
+## Product Update: May 2026
+
+Highlights:
+* Added `extract.dom` for [Custom JSON] routes to extract scalar values or repeated structured records from stable HTML with CSS or XPath selectors.
+
+### Documentation
+
+* Documented DOM extraction arguments, value modes, scalar and structured result shapes, caps, truncation behavior, and `required` semantics in the [JsonLogic-style DSL] reference.
+* Added CSS and XPath DOM examples, including a repeated-card recipe for extracting media opportunities from nested email layouts.
+
 ## Product Update: April 2026
 
 Highlights:

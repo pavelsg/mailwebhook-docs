@@ -441,6 +441,7 @@ Allowed helpers:
 * `extract.reply_segments`
 * `extract.key_value_pairs`
 * `extract.tables`
+* `extract.dom`
 
 Unknown helper names are rejected.
 
@@ -1016,6 +1017,231 @@ Table extraction rules:
 * There is no top-level flattened `cells` array in `v1`; use `rows[*].cells`, `cols[*].cells`, or `lookup`.
 * Layout tables, navigation/link groups, hidden/script/style/head content, and low-confidence grids are rejected by safety heuristics.
 
+### `call.extract.dom`
+
+Extracts scalar values or repeated structured records from message HTML with a
+CSS or XPath selector. Use this helper for stable sender templates where the
+target fields live in repeated cards, nested layout tables, or specific links
+that are not good fits for table or key/value extraction.
+
+CSS and XPath return the same output shape. XPath selectors must return element
+nodes. Scalar XPath expressions such as `count(//tr)` are rejected; use
+`value: "count"` to count matched elements.
+
+Arguments:
+
+| Arg | Default | Description |
+|-----|---------|-------------|
+| `html` | `message.html` | HTML source. |
+| `selector_type` | none | Required. `"css"` or `"xpath"`. |
+| `selector` | none | Required CSS selector or XPath selector. |
+| `value` | none | Required. `"text"`, `"attr"`, `"html"`, `"outer_html"`, `"exists"`, or `"count"`. |
+| `attr` | none | Required when `value` is `"attr"`. |
+| `many` | `false` | Retain all projected scalar values instead of only the first. |
+| `max_matches` | `16` | Maximum retained matches. Hard maximum: `32`. |
+| `default` | `null` | Scalar fallback when no projected value exists. |
+| `required` | `false` | Fail only when no element matches the selector. |
+| `normalize_whitespace` | `true` | Compact whitespace for text projection. |
+| `fields` | none | Structured record field object. When present, the top-level selector finds containers and each field selector runs inside its container. |
+| `include_container` | none | Optional structured-record metadata opt-in with `tag` and selected safe `attrs`. |
+
+Scalar result shape:
+
+```json
+{
+  "value": "$42.00",
+  "values": ["$42.00"],
+  "item": {
+    "index": 0,
+    "tag": "span",
+    "value": "$42.00",
+    "text": "$42.00",
+    "attrs": {
+      "class": "total"
+    }
+  },
+  "items": [
+    {
+      "index": 0,
+      "tag": "span",
+      "value": "$42.00",
+      "text": "$42.00",
+      "attrs": {
+        "class": "total"
+      }
+    }
+  ],
+  "summary": {
+    "match_count": 1,
+    "value_count": 1,
+    "truncated": false
+  }
+}
+```
+
+Aggregate modes return the aggregate in `value` and leave `values`, `item`, and
+`items` empty:
+
+```json
+{
+  "value": 3,
+  "values": [],
+  "item": null,
+  "items": [],
+  "summary": {
+    "match_count": 3,
+    "value_count": 0,
+    "truncated": false
+  }
+}
+```
+
+CSS scalar example:
+
+```json
+{
+  "version": "v1",
+  "vars": [
+    {
+      "name": "tracking_link",
+      "expr": {
+        "call.extract.dom": {
+          "selector_type": "css",
+          "selector": "a[href*='track']",
+          "value": "attr",
+          "attr": "href"
+        }
+      }
+    }
+  ],
+  "output": {
+    "tracking_url": { "var": "vars.tracking_link.value" }
+  }
+}
+```
+
+Structured XPath example:
+
+```json
+{
+  "version": "v1",
+  "vars": [
+    {
+      "name": "opportunities",
+      "expr": {
+        "call.extract.dom": {
+          "selector_type": "xpath",
+          "selector": "//h1[contains(normalize-space(.), 'Matches Based')]/following::table[1]//tr[td[contains(@style, 'padding:20px 0;')]/table//p[contains(normalize-space(.), 'Submit By:')]]",
+          "value": "text",
+          "fields": {
+            "outlet": {
+              "selector": ".//td[@width='90']//img[1]",
+              "value": "attr",
+              "attr": "alt"
+            },
+            "title": {
+              "selector": ".//td[@width='90']/following-sibling::td[1]/p[2]/a[1]",
+              "value": "text",
+              "required": true
+            },
+            "submit_by": {
+              "selector": ".//p[contains(normalize-space(.), 'Submit By:')]",
+              "value": "text"
+            },
+            "pitch_url": {
+              "selector": ".//a[contains(normalize-space(.), 'Learn More') and contains(normalize-space(.), 'Pitch')]",
+              "value": "attr",
+              "attr": "href"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "output": {
+    "count": { "var": "vars.opportunities.summary.item_count" },
+    "first_title": { "var": "vars.opportunities.items[0].values.title" },
+    "opportunities": {
+      "map": {
+        "over": { "var": "vars.opportunities.items" },
+        "as": "opportunity",
+        "do": {
+          "outlet": { "var": "opportunity.values.outlet" },
+          "title": { "var": "opportunity.values.title" },
+          "submit_by": { "var": "opportunity.values.submit_by" },
+          "pitch_url": { "var": "opportunity.values.pitch_url" }
+        }
+      }
+    }
+  }
+}
+```
+
+Structured result shape, abridged:
+
+```json
+{
+  "value": null,
+  "values": [],
+  "item": {
+    "index": 0,
+    "values": {
+      "outlet": "Attentus Technologies",
+      "title": "CFOs & IT leaders on in-house vs managed IT",
+      "submit_by": "Submit By: 4 May 7:17PM CEST (in 3 days)"
+    },
+    "fields": {
+      "title": {
+        "value": "CFOs & IT leaders on in-house vs managed IT",
+        "values": ["CFOs & IT leaders on in-house vs managed IT"],
+        "match_count": 1,
+        "value_count": 1,
+        "truncated": false
+      }
+    }
+  },
+  "items": [
+    {
+      "index": 0,
+      "values": {
+        "outlet": "Attentus Technologies",
+        "title": "CFOs & IT leaders on in-house vs managed IT",
+        "submit_by": "Submit By: 4 May 7:17PM CEST (in 3 days)"
+      },
+      "fields": {
+        "title": {
+          "value": "CFOs & IT leaders on in-house vs managed IT",
+          "values": ["CFOs & IT leaders on in-house vs managed IT"],
+          "match_count": 1,
+          "value_count": 1,
+          "truncated": false
+        }
+      }
+    }
+  ],
+  "summary": {
+    "item_count": 1,
+    "truncated": false
+  }
+}
+```
+
+DOM extraction rules:
+
+* `text` returns normalized text.
+* `attr` returns the selected attribute value or `null`.
+* `html` and `outer_html` return raw HTML projections capped at `8,192` characters.
+* `exists` returns a boolean aggregate in `value`.
+* `count` returns the number of matched elements retained up to `max_matches`.
+* Input HTML is capped at `200,000` characters before parsing.
+* `summary.truncated` is `true` when input, matches, or raw HTML projection are capped.
+* Hidden, script, style, noscript, and head content is removed before selector matching.
+* `required: true` fails only when no element matches. A matched empty node or missing projected attribute does not trigger a required failure.
+* Field selectors are scoped to their matched container.
+* Field-level `selector_type` inherits the parent selector engine. Mixed CSS and XPath record extraction is rejected.
+* XPath field selectors must be relative, for example `.//span[@class='price']`; absolute field selectors beginning with `/` or `//` are rejected.
+* Container tag and attributes are absent unless `include_container` requests them.
+
 ## Runtime limits and errors
 
 The DSL is deterministic and does not perform network IO. Helper calls are
@@ -1026,7 +1252,7 @@ Runtime limits:
 * Maximum expression depth: `50`
 * Maximum nodes evaluated: `10,000`
 * Regex timeout: about `50 ms` per operation
-* `transform.html_to_text`, `extract.urls`, `extract.bullet_list`, `extract.key_value_pairs`, and `extract.tables`: about `200 ms` per helper call
+* `transform.html_to_text`, `extract.urls`, `extract.bullet_list`, `extract.key_value_pairs`, `extract.tables`, and `extract.dom`: about `200 ms` per helper call
 * `extract.reply_segments`: bounded by reply-segmentation runtime guardrails
 
 Most operator-level failures return `null`. Hard guard failures raise a mapper

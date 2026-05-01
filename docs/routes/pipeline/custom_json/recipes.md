@@ -275,6 +275,102 @@ Notes:
 * Set `include_html_grids: true` for known senders that use ARIA or CSS table-like grids instead of native `<table>` markup.
 * Returned cell values are text-only. Raw HTML is not returned.
 
+## Extract repeated DOM cards
+
+Use when: an HTML email uses repeated visual cards or nested layout tables and
+you need one structured object per card.
+
+Config:
+
+```json
+{
+  "version": "v1",
+  "vars": [
+    {
+      "name": "opportunities",
+      "expr": {
+        "call.extract.dom": {
+          "selector_type": "xpath",
+          "selector": "//h1[contains(normalize-space(.), 'Matches Based')]/following::table[1]//tr[td[contains(@style, 'padding:20px 0;')]/table//p[contains(normalize-space(.), 'Submit By:')]]",
+          "value": "text",
+          "max_matches": 16,
+          "fields": {
+            "outlet": {
+              "selector": ".//td[@width='90']//img[1]",
+              "value": "attr",
+              "attr": "alt"
+            },
+            "title": {
+              "selector": ".//td[@width='90']/following-sibling::td[1]/p[2]/a[1]",
+              "value": "text",
+              "required": true
+            },
+            "submit_by": {
+              "selector": ".//p[contains(normalize-space(.), 'Submit By:')]",
+              "value": "text"
+            },
+            "description": {
+              "selector": ".//tr[2]/td/p[not(.//img)]",
+              "value": "text",
+              "many": true
+            },
+            "pitch_url": {
+              "selector": ".//a[contains(normalize-space(.), 'Learn More') and contains(normalize-space(.), 'Pitch')]",
+              "value": "attr",
+              "attr": "href"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "output": {
+    "subject": { "var": "message.subject" },
+    "opportunity_count": { "var": "vars.opportunities.summary.item_count" },
+    "opportunities": {
+      "map": {
+        "over": { "var": "vars.opportunities.items" },
+        "as": "opportunity",
+        "do": {
+          "outlet": { "var": "opportunity.values.outlet" },
+          "title": { "var": "opportunity.values.title" },
+          "submit_by": { "var": "opportunity.values.submit_by" },
+          "description": { "var": "opportunity.fields.description.values" },
+          "pitch_url": { "var": "opportunity.values.pitch_url" }
+        }
+      }
+    }
+  }
+}
+```
+
+Emits:
+
+```json
+{
+  "subject": "New media requests",
+  "opportunity_count": 2,
+  "opportunities": [
+    {
+      "outlet": "Attentus Technologies",
+      "title": "CFOs & IT leaders on in-house vs managed IT",
+      "submit_by": "Submit By: 4 May 7:17PM CEST (in 3 days)",
+      "description": [
+        "Looking for insights from CFOs, CIOs, and IT decision-makers..."
+      ],
+      "pitch_url": "https://example.com/pitch"
+    }
+  ]
+}
+```
+
+Notes:
+
+* CSS selectors are usually enough for stable links and attributes. XPath is better when the email needs text anchors such as `Submit By:` or section headings.
+* Field XPath selectors must be relative to each card, for example `.//p[contains(normalize-space(.), 'Submit By:')]`.
+* Use `fields.<name>.values` when a field has `many: true`; use `values.<name>` for first-value shortcuts.
+* Tracking URLs are returned as they appear in the email. Normalize or unwrap them downstream when needed.
+
 ## Turn a bullet list into tasks
 
 Use when: an email contains a checklist or next-steps list that should become structured task objects.

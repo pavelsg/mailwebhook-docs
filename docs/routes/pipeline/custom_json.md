@@ -138,6 +138,7 @@ operators:
 | `call.extract.reply_segments` | Split replies from quoted content, forwarded content, and signatures. |
 | `call.extract.key_value_pairs` | Extract conservative key/value fields from text or HTML. |
 | `call.extract.tables` | Extract structured tables from text, native HTML tables, or opt-in HTML grids. |
+| `call.extract.dom` | Extract scalar values or repeated structured records from stable HTML with CSS or XPath selectors. |
 
 Helpers can be called in either form:
 
@@ -320,6 +321,61 @@ See [function calls] in the DSL reference for helper arguments and output shapes
 includes normalized row and column headers, row-oriented and column-oriented
 lookup maps, iterable `rows` and `cols`, and the rectangular text-only `matrix`.
 
+### DOM extraction
+
+```json
+{
+  "version": "v1",
+  "vars": [
+    {
+      "name": "opportunities",
+      "expr": {
+        "call.extract.dom": {
+          "selector_type": "xpath",
+          "selector": "//h1[contains(normalize-space(.), 'Matches Based')]/following::table[1]//tr[td[contains(@style, 'padding:20px 0;')]/table//p[contains(normalize-space(.), 'Submit By:')]]",
+          "value": "text",
+          "fields": {
+            "outlet": {
+              "selector": ".//td[@width='90']//img[1]",
+              "value": "attr",
+              "attr": "alt"
+            },
+            "title": {
+              "selector": ".//td[@width='90']/following-sibling::td[1]/p[2]/a[1]",
+              "value": "text"
+            },
+            "submit_by": {
+              "selector": ".//p[contains(normalize-space(.), 'Submit By:')]",
+              "value": "text"
+            },
+            "pitch_url": {
+              "selector": ".//a[contains(normalize-space(.), 'Learn More') and contains(normalize-space(.), 'Pitch')]",
+              "value": "attr",
+              "attr": "href"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "output": {
+    "opportunity_count": { "var": "vars.opportunities.summary.item_count" },
+    "opportunities": {
+      "map": {
+        "over": { "var": "vars.opportunities.items" },
+        "as": "opportunity",
+        "do": { "var": "opportunity.values" }
+      }
+    }
+  }
+}
+```
+
+`extract.dom` is useful for stable sender templates where the fields are stored
+in repeated HTML cards or deeply nested layout tables. CSS selectors are best
+for simple stable attributes and links. XPath selectors are better for
+label-relative or text-anchored email layouts.
+
 ## Validation and limits
 
 The mapper config is validated when the route is saved and again before mapper
@@ -331,7 +387,7 @@ Runtime limits:
 * Max expression depth: `50`
 * Max nodes evaluated: `10,000` per mapper
 * Regex timeout: about `50 ms` per regex operation
-* `transform.html_to_text`, `extract.urls`, `extract.bullet_list`, `extract.key_value_pairs`, and `extract.tables`: about `200 ms` per helper call
+* `transform.html_to_text`, `extract.urls`, `extract.bullet_list`, `extract.key_value_pairs`, `extract.tables`, and `extract.dom`: about `200 ms` per helper call
 * `extract.reply_segments`: bounded by dedicated reply-segmentation runtime guardrails
 
 Most operator-level failures return `null`. Hard guard failures, such as timeout
