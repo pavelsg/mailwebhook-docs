@@ -25,7 +25,15 @@ permalink: pretty
 
 defaults:
   - scope:
-      path: "docs" # an empty string here means all files in the project
+      path: "" # all pages
+      type: "pages"
+    values:
+      image:
+        path: /assets/images/mailwebhook-social-default.png
+        width: 1536
+        height: 1024
+  - scope:
+      path: "docs"
       type: "pages"
     values:
       layout: "default"
