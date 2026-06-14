@@ -48,6 +48,9 @@
 
   {% seo %}
 
+  {% assign twitter_description = page.description | default: site.description | default: site.title %}
+  <meta name="twitter:description" content="{{ twitter_description | strip_html | normalize_whitespace | escape }}">
+
   {% include head_custom.html %}
 
 </head>
