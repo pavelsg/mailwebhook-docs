@@ -2,6 +2,7 @@
 title: Pipeline
 parent: Routes
 nav_order: 2
+description: "Build MailWebhook route pipelines with transform steps and terminal mappers that emit Generic JSON, Custom JSON, Slack, or Telegram payloads."
 ---
 
 # Pipeline

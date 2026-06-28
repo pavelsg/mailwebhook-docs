@@ -3,6 +3,7 @@ title: >
     Example
 parent: Generic JSON
 nav_order: 2
+description: "Inspect a full MailWebhook Generic JSON example payload with schema, event, message, body, headers, and normalized delivery metadata."
 ---
 
 ```json

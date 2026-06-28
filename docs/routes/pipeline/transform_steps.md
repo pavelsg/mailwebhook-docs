@@ -2,6 +2,7 @@
 title: Transform Steps
 parent: Pipeline
 nav_order: 1
+description: "Configure MailWebhook transform steps to normalize HTML, remove fields, replace values, or strip attachments before route mapping."
 ---
 
 # Transform Steps

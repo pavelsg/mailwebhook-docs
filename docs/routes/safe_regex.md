@@ -2,6 +2,7 @@
 title: Safe Regex
 parent: Routes
 nav_order: 5
+description: "Use MailWebhook safe regex guidance to write reliable route patterns and avoid expressions that can slow or block email routing."
 ---
 
 # Safe regex

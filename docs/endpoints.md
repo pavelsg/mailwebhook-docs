@@ -1,6 +1,7 @@
 ---
 title: Endpoints
 nav_order: 3
+description: "Configure MailWebhook HTTP endpoints for signed JSON POST delivery, static headers, idempotency keys, and exact route pipeline output."
 ---
 
 # Endpoints
@@ -15,6 +16,9 @@ nav_order: 3
 ---
 
 Endpoints represent HTTP delivery targets that routes point to. They are project-scoped records with a URL, optional static headers (for API keys, auth tokens, etc.), and a timeout hint.
+
+{: .note }
+Building a receiving endpoint for MailWebhook deliveries? See [Email Webhook API](https://www.mailwebhook.com/email-webhook-api) for product context and implementation positioning.
 
 ## HTTP request contract
 
@@ -95,4 +99,3 @@ Send GET request to the provided `url` with optional `headers` before `expires_a
 - Userinfo (`user:pass@`) is rejected.
 - Hostname must resolve; if it resolves to a literal IP, we check it directly.
 - Every resolved address must be public: private, loopback, link-local, reserved, or multicast ranges are blocked.
-

@@ -2,6 +2,7 @@
 title: Custom JSON
 parent: Pipeline
 nav_order: 5
+description: "Use MailWebhook Custom JSON to map parsed email fields into a route-specific webhook payload with variables, expressions, and helper calls."
 ---
 
 # Custom JSON
@@ -22,6 +23,9 @@ regex helpers, and MailWebhook extraction helpers.
 Use this page for the mapper contract. Use the [JsonLogic-style DSL] reference
 for operator syntax and expression semantics, and use [Recipes] for copy-paste
 payload patterns.
+
+{: .note }
+For product context around structured email payloads, see [Email to JSON](https://www.mailwebhook.com/email-to-json).
 
 ## How to use it
 
@@ -129,6 +133,9 @@ metadata and the attachment download API for file content.
 
 `map.custom_json` supports these helper calls in addition to the core DSL
 operators:
+
+{: .note }
+If the goal is not just a custom payload but an operated workflow that extracts and enters data for a business process, see [Email data entry automation](https://www.mailwebhook.com/email-data-entry-automation).
 
 | Helper | Use it for |
 |--------|------------|

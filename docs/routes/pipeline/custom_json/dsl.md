@@ -3,6 +3,7 @@ title: JsonLogic-Style DSL
 parent: Custom JSON
 grand_parent: Pipeline
 nav_order: 1
+description: "Reference the MailWebhook Custom JSON expression language for variables, conditionals, arrays, strings, regex, and extraction helper calls."
 ---
 
 # JsonLogic-Style DSL

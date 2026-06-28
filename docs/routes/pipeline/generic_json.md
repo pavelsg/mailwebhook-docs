@@ -3,6 +3,7 @@ title: >
     Generic JSON
 parent: Pipeline
 nav_order: 2
+description: "Review the MailWebhook Generic JSON payload shape for normalized message metadata, body fields, attachment descriptors, and event context."
 ---
 
 # Generic JSON
@@ -15,6 +16,9 @@ nav_order: 2
 {:toc}
 
 This mapper emits payloads that conform to [`mailwebhook.generic@1`](#schema-definition). Attachments stay out of the HTTP body and no URLs are embedded.
+
+{: .note }
+For product context around structured email payloads, see [Email to JSON](https://www.mailwebhook.com/email-to-json).
 
 ## Shape
 

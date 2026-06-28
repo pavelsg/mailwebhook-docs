@@ -1,6 +1,7 @@
 ---
 title: Mailboxes
 nav_order: 1
+description: "Configure MailWebhook mailboxes for Gmail, Microsoft 365, IMAP, hosted, and loopback email sources before routing messages to webhooks."
 ---
 
 # Mailboxes
@@ -26,6 +27,9 @@ Configure Gmail mailbox:
 * `Connect with Google`: start OAuth2 authorization flow for Gmail or Google Workspace mailbox.
 * `Label` (optional): limit monitoring to messages with a specific Gmail label. If not set, MailWebhook watches the default mailbox scope configured by the integration.
 
+{: .note }
+For product examples and use cases, see [Gmail to webhook](https://www.mailwebhook.com/gmail-to-webhook).
+
 ### Microsoft 365
 {: .d-inline-block }
 
@@ -38,6 +42,9 @@ Configure Microsoft 365 mailbox:
 * `Shared mailbox email` (optional): specify shared mailbox address when the target mailbox is not the authenticated user's primary inbox.
 
 Microsoft 365 mailboxes include Outlook 365 work mailboxes used inside Microsoft 365 organizations.
+
+{: .note }
+For Microsoft and Outlook mailbox workflows, see [Microsoft 365 email to webhook](https://www.mailwebhook.com/microsoft-365-email-to-webhook).
 
 ### Loopback
 {: .d-inline-block }
@@ -66,6 +73,9 @@ Configure IMAP mailbox:
 * `Folder`: specify mailbox folder to monitor (e.g., `INBOX`).
 
 You can use "Auto-discover" feature to automatically fill in IMAP server settings for providers properly configured SRV records in DNS.
+
+{: .note }
+For provider-neutral mailbox setup, see [IMAP to webhook](https://www.mailwebhook.com/imap-to-webhook).
 
 ### Hosted Mailbox
 {: .d-inline-block }

@@ -2,6 +2,7 @@
 title: Rules
 parent: Routes
 nav_order: 1
+description: "Write MailWebhook route rules that match inbound email by subject, sender, recipient, headers, attachment MIME type, and boolean logic."
 ---
 
 # Rules
