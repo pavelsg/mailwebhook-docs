@@ -1,7 +1,7 @@
 ---
 title: API keys and attachment downloads
-parent: API
-nav_order: 1
+parent: Delivery
+nav_order: 4
 description: "Use MailWebhook project API keys with X-API-Key to call attachment download URL, Events API, and replay endpoints from your backend."
 permalink: /docs/api/api-keys-and-attachments/
 ---

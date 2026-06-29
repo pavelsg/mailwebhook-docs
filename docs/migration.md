@@ -10,19 +10,27 @@ description: "Plan MailWebhook migrations from inbound email parsers, legacy web
 
 Use migration docs when you are replacing an existing email intake or inbound parse workflow with MailWebhook.
 
-This section is reserved for migration guides that compare the old workflow, the MailWebhook setup path, payload differences, delivery behavior, and rollout checks.
+Each guide compares the old workflow with the MailWebhook setup path, payload differences, delivery behavior, and rollout checks.
 
-Available migration guides:
+Migration guides:
 
 - [Replace an IMAP polling script with MailWebhook]
 - [Migrate from SendGrid Inbound Parse to MailWebhook]
 - [Migrate from an email parser tool to MailWebhook]
 
-Planned migration topics:
+Reference pages for migration work:
 
-- Legacy webhook payload migration
-- Staged rollout and validation
+- [Webhook payload reference]
+- [Custom JSON]
+- [Signed delivery]
+- [Webhook retries and replay]
+- [API keys and attachment downloads]
 
 [Replace an IMAP polling script with MailWebhook]: {% link docs/migration/replace-imap-polling.md %}
 [Migrate from SendGrid Inbound Parse to MailWebhook]: {% link docs/migration/sendgrid-inbound-parse.md %}
 [Migrate from an email parser tool to MailWebhook]: {% link docs/migration/email-parser-tool-migration.md %}
+[Webhook payload reference]: {% link docs/payloads/webhook-payload-reference.md %}
+[Custom JSON]: {% link docs/routes/pipeline/custom_json.md %}
+[Signed delivery]: {% link docs/delivery/signatures.md %}
+[Webhook retries and replay]: {% link docs/delivery/retries-and-replay.md %}
+[API keys and attachment downloads]: {% link docs/api/api-keys-and-attachments.md %}

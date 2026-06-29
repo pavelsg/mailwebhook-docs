@@ -111,7 +111,7 @@ Expressions can read these root objects with `{"var": "..."}`.
 | `message` | `from`, `to`, `reply_to`, `cc`, `bcc` | Address arrays. Each item has `email` and optional `name`. Use `message.from[0].email` for the first sender. |
 | `message` | `headers`, `headers_multi` | Lowercase header map, plus duplicate-preserving header values when repeated headers exist. |
 | `message` | `text`, `html` | Parsed text and HTML bodies. |
-| `message` | `attachments` | Attachment metadata array with `id`, `filename`, `content_type`, `size`, `blob_key`, `sha256`, `is_inline`, and optional `content_id`. |
+| `message` | `attachments` | Attachment metadata array with `id`, `filename`, `content_type`, `size`, `sha256`, `is_inline`, and optional `content_id`. |
 | `ctx` | `event_id`, `project_id`, `route_id`, `source_type`, `raw_size_bytes`, `now` | Runtime context. `now` is RFC3339 UTC. |
 | `meta` | any key you provide | Static metadata from the mapper config. |
 | `vars` | computed var names | Top-level vars evaluated before `output`. |

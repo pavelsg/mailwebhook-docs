@@ -13,9 +13,6 @@ Use this guide to connect an IMAP mailbox to MailWebhook and verify that new mes
 
 IMAP is the provider-neutral connector for mailboxes that expose a standard IMAP server. MailWebhook logs in to the configured mailbox, polls the selected folder, stores an IMAP UID cursor, and routes newly observed messages to your webhook.
 
-{: .note }
-For product examples and use cases, see [IMAP to webhook](https://www.mailwebhook.com/imap-to-webhook).
-
 ## Table of contents
 {: .no_toc .text-delta }
 
@@ -210,6 +207,7 @@ If existing mail is visible in the mailbox but no webhook event appears, confirm
 - [Generic JSON]
 - [Webhook retries and replay]
 - [Attachments]
+- [IMAP to webhook]
 
 [Mailboxes]: {% link docs/mailboxes.md %}
 [Receive your first inbound email webhook]: {% link docs/quickstart/first-webhook.md %}
@@ -221,3 +219,4 @@ If existing mail is visible in the mailbox but no webhook event appears, confirm
 [Generic JSON]: {% link docs/routes/pipeline/generic_json.md %}
 [Webhook retries and replay]: {% link docs/delivery/retries-and-replay.md %}
 [Attachments]: {% link docs/payloads/attachments.md %}
+[IMAP to webhook]: https://www.mailwebhook.com/imap-to-webhook

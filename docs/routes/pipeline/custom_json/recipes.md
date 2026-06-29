@@ -1,12 +1,12 @@
 ---
-title: Recipes
+title: Custom JSON recipes
 parent: Custom JSON
 grand_parent: Pipeline
 nav_order: 2
 description: "Copy MailWebhook Custom JSON mapper recipes for reply extraction, key-value parsing, tables, DOM extraction, and route-specific payloads."
 ---
 
-# Recipes
+# Custom JSON recipes
 {: .no_toc }
 
 ## Table of contents

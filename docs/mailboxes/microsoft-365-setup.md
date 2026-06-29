@@ -13,9 +13,6 @@ Use this guide to connect a Microsoft mailbox to MailWebhook and verify that new
 
 MailWebhook uses one **Microsoft 365** connector for Microsoft 365, Office 365, and Outlook mailbox workflows. Access depends on Microsoft OAuth, Microsoft Graph availability, and the mailbox permissions granted to the signed-in account.
 
-{: .note }
-For product examples and use cases, see [Microsoft 365 email to webhook](https://www.mailwebhook.com/microsoft-365-email-to-webhook).
-
 ## Table of contents
 {: .no_toc .text-delta }
 
@@ -213,6 +210,7 @@ If you need to inspect provider-real message fields, send a normal email to the 
 - [Webhook payload reference]
 - [Generic JSON]
 - [Webhook retries and replay]
+- [Microsoft 365 email to webhook]
 
 [Mailboxes]: {% link docs/mailboxes.md %}
 [Receive your first inbound email webhook]: {% link docs/quickstart/first-webhook.md %}
@@ -223,3 +221,4 @@ If you need to inspect provider-real message fields, send a normal email to the 
 [Webhook payload reference]: {% link docs/payloads/webhook-payload-reference.md %}
 [Generic JSON]: {% link docs/routes/pipeline/generic_json.md %}
 [Webhook retries and replay]: {% link docs/delivery/retries-and-replay.md %}
+[Microsoft 365 email to webhook]: https://www.mailwebhook.com/microsoft-365-email-to-webhook

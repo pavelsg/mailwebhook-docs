@@ -16,11 +16,15 @@ Start here:
 
 - [Verify signed webhook deliveries]
 - [Webhook retries and replay]
+- [Endpoints]
+- [API keys and attachment downloads]
 
 Current related docs:
 
-- [Endpoints]
+- [Fetch email attachments from webhook payloads]
 
 [Verify signed webhook deliveries]: {% link docs/delivery/signatures.md %}
 [Webhook retries and replay]: {% link docs/delivery/retries-and-replay.md %}
 [Endpoints]: {% link docs/endpoints.md %}
+[API keys and attachment downloads]: {% link docs/api/api-keys-and-attachments.md %}
+[Fetch email attachments from webhook payloads]: {% link docs/payloads/attachments.md %}

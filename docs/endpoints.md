@@ -1,6 +1,7 @@
 ---
 title: Endpoints
-nav_order: 5
+parent: Delivery
+nav_order: 3
 description: "Configure MailWebhook HTTP endpoints for signed JSON POST delivery, static headers, idempotency keys, and exact route pipeline output."
 ---
 

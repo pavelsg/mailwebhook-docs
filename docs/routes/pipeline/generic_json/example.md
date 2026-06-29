@@ -1,10 +1,16 @@
 ---
-title: >
-    Example
+title: Generic JSON example
 parent: Generic JSON
 nav_order: 2
 description: "Inspect a full MailWebhook Generic JSON example payload with schema, event, message, body, headers, and normalized delivery metadata."
 ---
+
+# Generic JSON example
+{: .no_toc }
+
+This example shows the current `mailwebhook.generic@1` payload shape sent by MailWebhook when an inbound email is delivered to a webhook endpoint.
+
+Use it with the [Generic JSON reference] for field rules and the [Webhook payload reference] for delivery-level context.
 
 ```json
 {
@@ -76,3 +82,6 @@ description: "Inspect a full MailWebhook Generic JSON example payload with schem
   }
 }
 ```
+
+[Generic JSON reference]: {% link docs/routes/pipeline/generic_json.md %}
+[Webhook payload reference]: {% link docs/payloads/webhook-payload-reference.md %}

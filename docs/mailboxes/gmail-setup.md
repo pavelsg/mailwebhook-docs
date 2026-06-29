@@ -13,9 +13,6 @@ Use this guide to connect a Gmail mailbox to MailWebhook and verify that new Gma
 
 MailWebhook uses Google OAuth for Gmail. You do not enter an IMAP host, password, or app password for the native Gmail connector.
 
-{: .note }
-For product examples and use cases, see [Gmail to webhook](https://www.mailwebhook.com/gmail-to-webhook).
-
 ## Table of contents
 {: .no_toc .text-delta }
 
@@ -185,6 +182,7 @@ If you need to inspect provider-real message fields, send a normal email to the 
 - [Webhook payload reference]
 - [Generic JSON]
 - [Webhook retries and replay]
+- [Gmail to webhook]
 
 [Mailboxes]: {% link docs/mailboxes.md %}
 [Receive your first inbound email webhook]: {% link docs/quickstart/first-webhook.md %}
@@ -195,3 +193,4 @@ If you need to inspect provider-real message fields, send a normal email to the 
 [Webhook payload reference]: {% link docs/payloads/webhook-payload-reference.md %}
 [Generic JSON]: {% link docs/routes/pipeline/generic_json.md %}
 [Webhook retries and replay]: {% link docs/delivery/retries-and-replay.md %}
+[Gmail to webhook]: https://www.mailwebhook.com/gmail-to-webhook

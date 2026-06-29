@@ -13,9 +13,6 @@ Use a loopback mailbox when you want to test the onboarding route and endpoint f
 
 A loopback mailbox is a temporary MailWebhook-hosted inbound alias created during onboarding. It can receive the onboarding test email, match the generated route rule, run the default `map.generic_json` pipeline, and deliver the resulting webhook request to the selected endpoint.
 
-{: .note }
-For product examples and use cases, see [Email to webhook](https://www.mailwebhook.com/email-to-webhook).
-
 ## Table of contents
 {: .no_toc .text-delta }
 
@@ -263,6 +260,7 @@ Open the preview response or the event delivery attempt. Failed attempts usually
 - [Generic JSON]
 - [Signed delivery]
 - [Webhook retries and replay]
+- [Email to webhook]
 
 [Mailboxes]: {% link docs/mailboxes.md %}
 [Receive your first inbound email webhook]: {% link docs/quickstart/first-webhook.md %}
@@ -277,3 +275,4 @@ Open the preview response or the event delivery attempt. Failed attempts usually
 [Generic JSON]: {% link docs/routes/pipeline/generic_json.md %}
 [Signed delivery]: {% link docs/delivery/signatures.md %}
 [Webhook retries and replay]: {% link docs/delivery/retries-and-replay.md %}
+[Email to webhook]: https://www.mailwebhook.com/email-to-webhook

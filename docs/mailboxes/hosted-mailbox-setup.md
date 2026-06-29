@@ -13,9 +13,6 @@ Use this guide to create a MailWebhook-hosted inbound address and verify that me
 
 A hosted mailbox is an inbound email address hosted by MailWebhook. It receives mail directly through MailWebhook's inbound mail system, stores the raw message, evaluates your routes, and delivers the route payload to your endpoint.
 
-{: .note }
-For product examples and use cases, see [Email to webhook](https://www.mailwebhook.com/email-to-webhook).
-
 ## Table of contents
 {: .no_toc .text-delta }
 
@@ -218,6 +215,7 @@ Check these items:
 - [Generic JSON]
 - [Webhook retries and replay]
 - [Attachments]
+- [Email to webhook]
 
 [Mailboxes]: {% link docs/mailboxes.md %}
 [Receive your first inbound email webhook]: {% link docs/quickstart/first-webhook.md %}
@@ -229,3 +227,4 @@ Check these items:
 [Generic JSON]: {% link docs/routes/pipeline/generic_json.md %}
 [Webhook retries and replay]: {% link docs/delivery/retries-and-replay.md %}
 [Attachments]: {% link docs/payloads/attachments.md %}
+[Email to webhook]: https://www.mailwebhook.com/email-to-webhook

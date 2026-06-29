@@ -81,7 +81,6 @@ Supported paths:
 * `attachments[*].content_type`
 * `attachments[*].size`
 * `attachments[*].sha256`
-* `attachments[*].blob_key`
 
 Example:
 
@@ -92,14 +91,15 @@ Example:
     "paths": [
       "headers.received",
       "html",
-      "attachments[*].blob_key"
+      "attachments[*].sha256"
     ]
   }
 }
 ```
 
 Unknown attachment subfields are ignored. Attachment field removal clears safe
-metadata fields while preserving attachment identity.
+metadata fields while preserving attachment identity. Internal attachment
+storage fields are not part of the public transform contract.
 
 ## `replace_values`
 

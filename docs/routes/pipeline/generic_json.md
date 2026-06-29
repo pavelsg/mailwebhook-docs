@@ -1,6 +1,5 @@
 ---
-title: >
-    Generic JSON
+title: Generic JSON
 parent: Pipeline
 nav_order: 2
 description: "Review the MailWebhook Generic JSON payload shape for normalized message metadata, body fields, attachment descriptors, and event context."
