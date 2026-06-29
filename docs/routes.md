@@ -1,6 +1,6 @@
 ---
 title: Routes
-nav_order: 2
+nav_order: 4
 description: "Define MailWebhook routes that match inbound email, run a transformation pipeline, and deliver the resulting JSON to an endpoint."
 ---
 

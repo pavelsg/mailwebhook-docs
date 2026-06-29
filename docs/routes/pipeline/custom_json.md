@@ -127,7 +127,7 @@ or `null`. If the top-level `output` evaluates to `null`, MailWebhook emits an
 empty object.
 
 Attachments are not inlined into the HTTP body. Use `message.attachments` for
-metadata and the attachment download API for file content.
+metadata and the attachment download API for file content. See [Fetch email attachments from webhook payloads] for the download flow.
 
 ## Built-in helpers
 
@@ -410,3 +410,4 @@ The emitted output is intentionally permissive and is validated by
 [JsonLogic-style DSL]: {% link docs/routes/pipeline/custom_json/dsl.md %}
 [Recipes]: {% link docs/routes/pipeline/custom_json/recipes.md %}
 [function calls]: {% link docs/routes/pipeline/custom_json/dsl.md %}#function-calls
+[Fetch email attachments from webhook payloads]: {% link docs/payloads/attachments.md %}

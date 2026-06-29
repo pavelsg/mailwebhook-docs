@@ -35,7 +35,7 @@ Highlights:
 
 Highlights:
 * Added native Gmail mailbox support
-* Added native Microsoft 365 mailbox support for Outlook 365 work mailboxes
+* Added native Microsoft 365 mailbox support for Microsoft 365, Office 365, and Outlook mailboxes
 * Added temporary loopback mailboxes for onboarding and testing
 
 ### Documentation

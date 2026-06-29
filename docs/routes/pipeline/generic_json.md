@@ -15,7 +15,7 @@ description: "Review the MailWebhook Generic JSON payload shape for normalized m
 1. TOC
 {:toc}
 
-This mapper emits payloads that conform to [`mailwebhook.generic@1`](#schema-definition). Attachments stay out of the HTTP body and no URLs are embedded.
+This mapper emits payloads that conform to [`mailwebhook.generic@1`](#schema-definition). Attachments stay out of the HTTP body and no URLs are embedded. See [Fetch email attachments from webhook payloads] for download details.
 
 {: .note }
 For product context around structured email payloads, see [Email to JSON](https://www.mailwebhook.com/email-to-json).
@@ -197,3 +197,4 @@ For product context around structured email payloads, see [Email to JSON](https:
 Find [example of default email] here.
 
 [example of default email]: {% link docs/routes/pipeline/generic_json/example.md %}
+[Fetch email attachments from webhook payloads]: {% link docs/payloads/attachments.md %}

@@ -20,48 +20,84 @@ We try to maintain backward compatibility though.
 
 ### General concepts
 
-MailWebhook operates on 3 core concepts:
+MailWebhook operates on three core concepts:
+
 - [Mailboxes]
 - [Routes]
 - [Endpoints]
 
-[Mailboxes] are polled at pre-defined intervals. All ingested emails are pushed to all [Routes]. [Routes] do the matching, transform matched emails and deliver those to connected webhook [Endpoints].
+[Mailboxes] receive or read email from providers such as Gmail, Microsoft 365, Office 365, Outlook, IMAP, hosted MailWebhook addresses, and loopback test addresses. Each ingested message is normalized, evaluated against [Routes], transformed by the matching route pipeline, and delivered to the route's configured [Endpoint].
+
+The default pipeline emits [Generic JSON]. Custom pipelines can emit a different JSON body when you need a route-specific shape.
 
 ```mermaid
 flowchart TD
-    A[Inbound email] --> B[Normalize message fields]
-    B --> C[Route rules]
-    C -->|match| D[Pipeline steps]
-    D --> E[Optional html_to_text]
-    D --> F[Optional extract.urls]
-    D --> G[map.generic_json or map.custom_json]
-    G --> H[Attachment metadata in payload]
-    H --> I[Pre-signed attachment fetch API]
-    G --> J[Signed webhook delivery]
-    J --> K[Retries with backoff]
-    J --> L[Event inspector and replay]
+    A[Inbound email] --> B[Mailbox]
+    B --> C[Normalize message fields]
+    C --> D[Route rules]
+    D -->|match| E[Pipeline steps]
+    E --> F[map.generic_json or map.custom_json]
+    F --> G[Signed JSON POST to endpoint]
+    G --> H[Events and delivery attempts]
+    H --> I[Retries for transient failures]
+    H --> J[Replay Event]
+    F --> K[Attachment descriptors]
+    K --> L[Attachment URL API]
 ```
 
-### 1. Connect the mailbox.
+### 1. Connect or create a mailbox
 
-From Dashboard or [Mailboxes] screens click "+Add Mailbox" button. IMAP, Gmail and Outlook365 connectors are supported for now.
+Open **Mailboxes** and click **+ Add Mailbox**.
 
-### 2. Connect endpoint
+Supported sources include:
 
-From Dashboard or [Endpoints] screens click "+Add Endpoint" button. No auth supported at the moment, header-based auth is coming soon.
+- Gmail
+- Microsoft 365, Office 365, and Outlook
+- IMAP
+- Hosted Mailbox
+- Loopback test mailbox
 
-### 3. Define route
+For Gmail and Microsoft mailboxes, connect with the provider OAuth flow. For IMAP, enter the server, folder, and polling settings. New connected mailboxes start from the current mailbox cursor; use backfill when you need to ingest older messages.
 
-Each email received from all configured mailboxes hit all [Routes]. Routes composed of 3 components:
+### 2. Add an endpoint
 
-1. [Rules] match incoming emails to defined set of criteria
-2. [Pipeline] transform email into desired shape
-3. [Endpoints] Attach route to the Endpoint.
+Open **Endpoints** and click **+ Add Endpoint**.
+
+An endpoint is the HTTP target that receives matched email as JSON. Configure the URL and timeout for the receiving service.
+
+MailWebhook sends `POST` requests with `Content-Type: application/json`. Delivery requests include deterministic headers such as `X-MailWebhook-Signature` and `X-Idempotency-Key`.
+
+### 3. Define a route
+
+Open **Routes** and create a route that connects matching email to an endpoint.
+
+A route has three parts:
+
+1. [Rules] match incoming email by fields such as recipient, sender domain, subject text, or headers.
+2. [Pipeline] transforms the normalized email into the webhook body.
+3. [Endpoint] selects where the resulting JSON is delivered.
+
+The default pipeline uses `map.generic_json` and emits the [Generic JSON] payload. Attachments are represented as descriptors in the payload. Your backend can request a short-lived attachment download URL through the [API keys and attachment downloads] guide with `X-API-Key`.
+
+### 4. Send a test email
+
+Send an email to the mailbox address or connected provider mailbox. In onboarding, use **Webhook Preview** to inspect the request, response, `curl`, Python, and Node.js examples for the delivery.
+
+Email delivery can take 30-60 seconds depending on the sender and mailbox provider.
+
+### 5. Monitor delivery and replay when needed
+
+Open **Events** to inspect message status and delivery attempts. Use **Delivery Attempts History** to debug endpoint responses.
+
+For transient failures, MailWebhook retries delivery. For manual reprocessing, open the event and use **Replay Event**.
 
 ---
 
 [Mailboxes]: {% link docs/mailboxes.md %}
 [Routes]: {% link docs/routes.md %}
 [Endpoints]: {% link docs/endpoints.md %}
+[Endpoint]: {% link docs/endpoints.md %}
 [Rules]: {% link docs/routes/rules.md %}
 [Pipeline]: {% link docs/routes/pipeline.md %}
+[Generic JSON]: {% link docs/routes/pipeline/generic_json.md %}
+[API keys and attachment downloads]: {% link docs/api/api-keys-and-attachments.md %}

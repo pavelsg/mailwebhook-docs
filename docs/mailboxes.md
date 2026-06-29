@@ -1,7 +1,8 @@
 ---
 title: Mailboxes
-nav_order: 1
-description: "Configure MailWebhook mailboxes for Gmail, Microsoft 365, IMAP, hosted, and loopback email sources before routing messages to webhooks."
+nav_order: 3
+has_children: true
+description: "Configure MailWebhook mailboxes for Gmail, Microsoft 365, Office 365, Outlook, IMAP, hosted, and loopback email sources before routing messages to webhooks."
 ---
 
 # Mailboxes
@@ -25,7 +26,9 @@ New March 2026
 
 Configure Gmail mailbox:
 * `Connect with Google`: start OAuth2 authorization flow for Gmail or Google Workspace mailbox.
-* `Label` (optional): limit monitoring to messages with a specific Gmail label. If not set, MailWebhook watches the default mailbox scope configured by the integration.
+* `Gmail label ID (optional)`: limit monitoring to messages with a specific Gmail label. If not set, MailWebhook watches the default mailbox scope configured by the integration.
+
+For setup steps, label filtering behavior, and verification, see [Connect Gmail as a mailbox source].
 
 {: .note }
 For product examples and use cases, see [Gmail to webhook](https://www.mailwebhook.com/gmail-to-webhook).
@@ -36,15 +39,19 @@ For product examples and use cases, see [Gmail to webhook](https://www.mailwebho
 New March 2026
 {: .label .label-green }
 
-Configure Microsoft 365 mailbox:
-* `Connect with Microsoft 365`: start OAuth2 authorization flow for Microsoft 365 mailbox.
-* `Folder`: specify the mailbox folder to monitor.
-* `Shared mailbox email` (optional): specify shared mailbox address when the target mailbox is not the authenticated user's primary inbox.
+Configure a Microsoft 365, Office 365, or Outlook mailbox:
+* `Provider`: choose `Microsoft 365`.
+* `Connect shared mailbox`: enable when the target mailbox is a shared mailbox.
+* `Shared mailbox email (optional)`: specify the shared mailbox address.
+* `Folder name`: specify the mailbox folder to monitor. Default is `Inbox`.
+* `Folder ID (optional)`: specify the exact Microsoft Graph folder id. If both folder name and folder id are set, folder id takes precedence.
 
-Microsoft 365 mailboxes include Outlook 365 work mailboxes used inside Microsoft 365 organizations.
+The Microsoft 365 connector is used for Microsoft 365, Office 365, and Outlook mailboxes. Shared mailbox access depends on the Microsoft account permissions granted during OAuth.
+
+For setup steps, folder targeting, shared mailbox behavior, and verification, see [Microsoft 365 mailbox setup].
 
 {: .note }
-For Microsoft and Outlook mailbox workflows, see [Microsoft 365 email to webhook](https://www.mailwebhook.com/microsoft-365-email-to-webhook).
+For Microsoft 365, Office 365, and Outlook mailbox workflows, see [Microsoft 365 email to webhook](https://www.mailwebhook.com/microsoft-365-email-to-webhook).
 
 ### Loopback
 {: .d-inline-block }
@@ -62,17 +69,22 @@ Loopback mailbox behavior:
 * Loopback mailboxes stay out of normal mailbox lists.
 * Loopback mailboxes do not count against normal mailbox limits.
 
+For onboarding test steps, temporary alias behavior, preview events, and verification, see [Test routes with a loopback mailbox].
+
 ### IMAP
 
 Configure IMAP mailbox:
-* `Email/Username`: specify IMAP login username.
+* `Email / Username`: specify IMAP login username.
 * `Password / App Password`: specify IMAP password for authentication.
 * `Host`: specify IMAP server hostname.
 * `Port`: specify IMAP server port.
 * `Use SSL/TLS`: enable/disable TLS for IMAP connection.
 * `Folder`: specify mailbox folder to monitor (e.g., `INBOX`).
+* `Poll Interval (seconds)`: specify how often MailWebhook should poll the mailbox, subject to API limits and plan floors.
 
-You can use "Auto-discover" feature to automatically fill in IMAP server settings for providers properly configured SRV records in DNS.
+You can use **Auto-discover** to fill in IMAP server settings when the provider publishes compatible DNS records.
+
+For setup steps, polling behavior, backfill, and verification, see [IMAP mailbox configuration].
 
 {: .note }
 For provider-neutral mailbox setup, see [IMAP to webhook](https://www.mailwebhook.com/imap-to-webhook).
@@ -86,9 +98,9 @@ New v.0.10.2
 Paid plans
 {: .label .label-yellow }
 
-You can create hosted mailbox directly in MailWebhook system.
+You can create a hosted mailbox directly in MailWebhook.
 
-Hosted mailbox is a virtual email address hosted by MailWebhook that only task is to receive incoming emails, match them against configured [routes], and forward resulting JSON to configured [endpoints]. You can not connect to hosted mailbox using conventional email clients.
+A hosted mailbox is a virtual email address hosted by MailWebhook. It receives incoming email, matches messages against configured [routes], and forwards resulting JSON to configured [endpoints]. You cannot connect to a hosted mailbox using conventional email clients.
 
 Each mailbox can have an unlimited number of email aliases. Incoming emails sent to any of the aliases will be delivered to the same mailbox. You can use aliases to create more user-friendly email addresses for each individual purpose (i.e. `jira@<domain>`, `cloudflare@<domain>` etc.) to match routes easily.
 
@@ -102,6 +114,8 @@ Each hosted mailbox allows to define following settings:
     * `Reject threshold`: specify SPAM score threshold above which incoming emails will be rejected. Those emails will not be evaluated against any [routes].
     * `Quarantine threshold`: specify SPAM score threshold above which incoming emails will be marked as Quarantine. Those emails will still be evaluated against [routes], but not be delivered to the [endpoint]. You can review quarantined emails in the event log and process them manually using "Replay" feature.
 * **Maximum message size (bytes)**: specify maximum allowed size of incoming emails. Emails exceeding this size will be rejected without being evaluated against any [routes].
+
+For setup steps, aliases, hosted policy behavior, and verification, see [Create a hosted mailbox].
 
 ## Other OAuth Providers
 
@@ -132,7 +146,7 @@ Limitation: no attachments are included in preview.
 
 Backfill lets you re‑ingest email that arrived **before** you connected the mailbox to MailWebhook.
 
-- Where: open the mailbox "..." (Actions) menu for supported providers (IMAP, Gmail).
+- Where: open the mailbox "..." (Actions) menu for supported providers (IMAP, Gmail, Microsoft 365).
 - How: set the slider to the number of days you want to go back in time, hit "Start", done.
 - Behavior: jobs run in the background, pause automatically on errors, and are idempotent (already delivered emails are skipped).
 - Availability: included on all plans; one backfill job can run at a time.
@@ -144,3 +158,8 @@ Backfill lets you re‑ingest email that arrived **before** you connected the ma
 [Rules]: {% link docs/routes/rules.md %}
 [Routes]: {% link docs/routes.md %}
 [Endpoints]: {% link docs/endpoints.md %}
+[Connect Gmail as a mailbox source]: {% link docs/mailboxes/gmail-setup.md %}
+[Microsoft 365 mailbox setup]: {% link docs/mailboxes/microsoft-365-setup.md %}
+[Test routes with a loopback mailbox]: {% link docs/mailboxes/loopback-testing.md %}
+[IMAP mailbox configuration]: {% link docs/mailboxes/imap-configuration.md %}
+[Create a hosted mailbox]: {% link docs/mailboxes/hosted-mailbox-setup.md %}
