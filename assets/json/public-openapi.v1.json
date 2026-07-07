@@ -1,0 +1,4366 @@
+{
+  "components": {
+    "examples": {
+      "error_envelope": {
+        "summary": "Standard error envelope",
+        "value": {
+          "error": {
+            "code": "auth.invalid_api_key",
+            "details": {},
+            "message": "Invalid or disabled API key"
+          }
+        }
+      },
+      "generic_json_payload": {
+        "summary": "Generic JSON webhook body",
+        "value": {
+          "attachments": [],
+          "data": {
+            "message": {
+              "attachments": [],
+              "from": [
+                {
+                  "email": "alice@example.com",
+                  "name": "Alice"
+                }
+              ],
+              "headers": {
+                "x-test": "true"
+              },
+              "html": "<p>This is a <b>text</b> body…</p>",
+              "message_id": "<abc@example>",
+              "subject": "Hello from mailwebhook",
+              "text": "This is a text body…",
+              "to": [
+                {
+                  "email": "ops@example.com",
+                  "name": "Ops"
+                }
+              ]
+            },
+            "meta": {
+              "raw_size_bytes": 42013,
+              "schema_version": "v1"
+            },
+            "received_at": "2025-01-01T00:00:00Z",
+            "routing": {
+              "route_id": "00000000-0000-0000-0000-000000000000"
+            },
+            "source": {
+              "type": "imap"
+            }
+          },
+          "schema_version": "v1"
+        }
+      },
+      "onboarding_chat_route_pair_created_response": {
+        "summary": "Chat route pair created (201)",
+        "value": {
+          "endpoint_id": "11111111-1111-1111-1111-111111111111",
+          "endpoint_reused": false,
+          "provider": "slack",
+          "route_id": "22222222-2222-2222-2222-222222222222",
+          "route_reused": false
+        }
+      },
+      "onboarding_chat_route_pair_reused_response": {
+        "summary": "Chat route pair fully reused (200)",
+        "value": {
+          "endpoint_id": "11111111-1111-1111-1111-111111111111",
+          "endpoint_reused": true,
+          "provider": "slack",
+          "route_id": "22222222-2222-2222-2222-222222222222",
+          "route_reused": true
+        }
+      },
+      "onboarding_chat_route_pair_slack_request": {
+        "summary": "Create Slack chat route pair request",
+        "value": {
+          "bot_api_key": "xoxb-1234567890",
+          "channel_id": "C0123456789",
+          "enabled": true,
+          "provider": "slack",
+          "route_name": "Slack alerts route"
+        }
+      },
+      "onboarding_chat_route_pair_slack_rule_request": {
+        "summary": "Create Slack chat route pair request with mailbox rule",
+        "value": {
+          "bot_api_key": "xoxb-1234567890",
+          "channel_id": "C0123456789",
+          "enabled": true,
+          "provider": "slack",
+          "route_name": "Slack mailbox alerts route",
+          "rule": {
+            "to_emails": [
+              "alerts@example.com"
+            ]
+          }
+        }
+      },
+      "onboarding_chat_route_pair_telegram_request": {
+        "summary": "Create Telegram chat route pair request",
+        "value": {
+          "bot_api_key": "123456:ABCDEF",
+          "chat_id": "-10012345",
+          "enabled": true,
+          "provider": "telegram",
+          "route_name": "Telegram alerts route"
+        }
+      },
+      "onboarding_https_route_pair_created_response": {
+        "summary": "HTTPS route pair created (201)",
+        "value": {
+          "endpoint_id": "33333333-3333-3333-3333-333333333333",
+          "endpoint_reused": false,
+          "route_id": "44444444-4444-4444-4444-444444444444",
+          "route_reused": false
+        }
+      },
+      "onboarding_https_route_pair_request": {
+        "summary": "Create HTTPS route pair request",
+        "value": {
+          "enabled": true,
+          "endpoint_headers": {
+            "Authorization": "Bearer token"
+          },
+          "endpoint_url": "https://api.example.com/mailwebhook",
+          "route_name": "Primary webhook route",
+          "timeout_s": 10
+        }
+      },
+      "onboarding_https_route_pair_reused_response": {
+        "summary": "HTTPS route pair fully reused (200)",
+        "value": {
+          "endpoint_id": "33333333-3333-3333-3333-333333333333",
+          "endpoint_reused": true,
+          "route_id": "44444444-4444-4444-4444-444444444444",
+          "route_reused": true
+        }
+      },
+      "signature_header": {
+        "summary": "Signature header example",
+        "value": "t=1710000000, kid=dev-kid, v1=BASE64_HMAC_BYTES"
+      },
+      "slack_simple_payload": {
+        "summary": "Slack simple webhook body",
+        "value": {
+          "attachments": [],
+          "data": {
+            "channel": "C0123456789",
+            "text": "Subject: Hello from mailwebhook\nFrom: Alice <alice@example.com>\nThis is a text body…"
+          },
+          "schema_version": "v1"
+        }
+      },
+      "telegram_simple_payload": {
+        "summary": "Telegram simple webhook body",
+        "value": {
+          "attachments": [],
+          "data": {
+            "chat_id": "-1001234567890",
+            "text": "Subject: Hello from mailwebhook\nFrom: Alice <alice@example.com>\nThis is a text body…"
+          },
+          "schema_version": "v1"
+        }
+      }
+    },
+    "schemas": {
+      "ApiKeyOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "secret": {
+            "title": "Secret",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "secret"
+        ],
+        "title": "ApiKeyOut",
+        "type": "object"
+      },
+      "AttachmentUrlResponse": {
+        "properties": {
+          "expires_at": {
+            "description": "UTC expiration time for the URL",
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "headers": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Headers",
+            "type": "object"
+          },
+          "method": {
+            "default": "GET",
+            "title": "Method",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "expires_at"
+        ],
+        "title": "AttachmentUrlResponse",
+        "type": "object"
+      },
+      "AttemptBodyCapture": {
+        "description": "Decoded body preview with truncation metadata.",
+        "properties": {
+          "content_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Type"
+          },
+          "original_bytes": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Original Bytes"
+          },
+          "preview_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preview Text"
+          },
+          "stored_bytes": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stored Bytes"
+          },
+          "truncated": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Truncated"
+          }
+        },
+        "title": "AttemptBodyCapture",
+        "type": "object"
+      },
+      "AttemptHeadersCapture": {
+        "description": "Decoded header preview with truncation metadata.",
+        "properties": {
+          "original_bytes": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Original Bytes"
+          },
+          "stored_bytes": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stored Bytes"
+          },
+          "truncated": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Truncated"
+          },
+          "values": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Values"
+          }
+        },
+        "title": "AttemptHeadersCapture",
+        "type": "object"
+      },
+      "AttemptItemRead": {
+        "description": "Canonical attempt read payload for API/UI surfaces.",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "http_status": {
+            "title": "Http Status",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "latency_ms": {
+            "title": "Latency Ms",
+            "type": "integer"
+          },
+          "request_capture": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AttemptRequestCapture"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "response_capture": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AttemptResponseCapture"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "http_status",
+          "latency_ms",
+          "created_at"
+        ],
+        "title": "AttemptItemRead",
+        "type": "object"
+      },
+      "AttemptRequestCapture": {
+        "description": "Request-side capture section for one delivery attempt.",
+        "properties": {
+          "body": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AttemptBodyCapture"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "headers": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AttemptHeadersCapture"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "method": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Method"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "title": "AttemptRequestCapture",
+        "type": "object"
+      },
+      "AttemptResponseCapture": {
+        "description": "Response-side capture section for one delivery attempt.",
+        "properties": {
+          "body": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AttemptBodyCapture"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "headers": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AttemptHeadersCapture"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "network_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Network Error"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "title": "AttemptResponseCapture",
+        "type": "object"
+      },
+      "BackfillRequest": {
+        "description": "Backfill start request payload.",
+        "properties": {
+          "days": {
+            "description": "Number of days to backfill (0 means today only).",
+            "minimum": 0.0,
+            "title": "Days",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "days"
+        ],
+        "title": "BackfillRequest",
+        "type": "object"
+      },
+      "BackfillStatus": {
+        "description": "Snapshot of backfill state for a mailbox.\n\nStatus values include: idle, running, paused, finalizing, completed, canceled.",
+        "properties": {
+          "cursor_at_utc": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cursor At Utc"
+          },
+          "end_at_utc": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End At Utc"
+          },
+          "last_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Error"
+          },
+          "mailbox_id": {
+            "format": "uuid",
+            "title": "Mailbox Id",
+            "type": "string"
+          },
+          "pause_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pause Reason"
+          },
+          "processed_days": {
+            "title": "Processed Days",
+            "type": "integer"
+          },
+          "project_id": {
+            "format": "uuid",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "start_at_utc": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start At Utc"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "total_days": {
+            "title": "Total Days",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "mailbox_id",
+          "project_id",
+          "status",
+          "start_at_utc",
+          "end_at_utc",
+          "cursor_at_utc",
+          "processed_days",
+          "total_days",
+          "pause_reason",
+          "last_error"
+        ],
+        "title": "BackfillStatus",
+        "type": "object"
+      },
+      "BillingPlanResponse": {
+        "properties": {
+          "period": {
+            "$ref": "#/components/schemas/PeriodInfo"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/PlanInfo"
+          },
+          "remaining": {
+            "$ref": "#/components/schemas/RemainingInfo"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/UsageCounters"
+          }
+        },
+        "required": [
+          "plan",
+          "period",
+          "usage",
+          "remaining"
+        ],
+        "title": "BillingPlanResponse",
+        "type": "object"
+      },
+      "Body_reset_confirm_post_auth_reset_confirm_post": {
+        "properties": {
+          "csrf_token": {
+            "default": "",
+            "title": "Csrf Token",
+            "type": "string"
+          },
+          "password": {
+            "title": "Password",
+            "type": "string"
+          },
+          "password_confirm": {
+            "title": "Password Confirm",
+            "type": "string"
+          },
+          "token": {
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "password",
+          "password_confirm"
+        ],
+        "title": "Body_reset_confirm_post_auth_reset_confirm_post",
+        "type": "object"
+      },
+      "Body_reset_post_auth_reset_post": {
+        "properties": {
+          "csrf_token": {
+            "default": "",
+            "title": "Csrf Token",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "Body_reset_post_auth_reset_post",
+        "type": "object"
+      },
+      "Body_signin_post_auth_signin_post": {
+        "properties": {
+          "csrf_token": {
+            "default": "",
+            "title": "Csrf Token",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "password": {
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "Body_signin_post_auth_signin_post",
+        "type": "object"
+      },
+      "Body_signup_post_auth_signup_post": {
+        "properties": {
+          "csrf_token": {
+            "default": "",
+            "title": "Csrf Token",
+            "type": "string"
+          },
+          "dp": {
+            "default": "",
+            "title": "Dp",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "fbc": {
+            "default": "",
+            "title": "Fbc",
+            "type": "string"
+          },
+          "fbp": {
+            "default": "",
+            "title": "Fbp",
+            "type": "string"
+          },
+          "password": {
+            "title": "Password",
+            "type": "string"
+          },
+          "password_confirm": {
+            "title": "Password Confirm",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "password_confirm"
+        ],
+        "title": "Body_signup_post_auth_signup_post",
+        "type": "object"
+      },
+      "Body_ui_account_update_ui_account_update_post": {
+        "properties": {
+          "email": {
+            "default": "",
+            "title": "Email",
+            "type": "string"
+          },
+          "owner_name": {
+            "default": "",
+            "title": "Owner Name",
+            "type": "string"
+          }
+        },
+        "title": "Body_ui_account_update_ui_account_update_post",
+        "type": "object"
+      },
+      "Body_ui_endpoints_create_ui_endpoints_new_post": {
+        "properties": {
+          "header_key": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Header Key"
+          },
+          "header_value": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Header Value"
+          },
+          "timeout_s": {
+            "default": 10,
+            "title": "Timeout S",
+            "type": "integer"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "Body_ui_endpoints_create_ui_endpoints_new_post",
+        "type": "object"
+      },
+      "Body_ui_endpoints_test_new_ui_endpoints_test_post": {
+        "properties": {
+          "timeout_s": {
+            "default": 10,
+            "title": "Timeout S",
+            "type": "integer"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "Body_ui_endpoints_test_new_ui_endpoints_test_post",
+        "type": "object"
+      },
+      "Body_ui_endpoints_update_ui_endpoints__endpoint_id__edit_post": {
+        "properties": {
+          "header_key": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Header Key"
+          },
+          "header_value": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Header Value"
+          },
+          "timeout_s": {
+            "default": 10,
+            "title": "Timeout S",
+            "type": "integer"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "Body_ui_endpoints_update_ui_endpoints__endpoint_id__edit_post",
+        "type": "object"
+      },
+      "Body_ui_hosted_alias_toggle_ui_hosted_mailboxes_addresses__inbound_address_id__toggle_post": {
+        "properties": {
+          "enabled": {
+            "default": false,
+            "title": "Enabled",
+            "type": "boolean"
+          }
+        },
+        "title": "Body_ui_hosted_alias_toggle_ui_hosted_mailboxes_addresses__inbound_address_id__toggle_post",
+        "type": "object"
+      },
+      "Body_ui_hosted_mailboxes_create_ui_hosted_mailboxes_new_post": {
+        "properties": {
+          "aliases": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aliases"
+          },
+          "display": {
+            "default": "",
+            "title": "Display",
+            "type": "string"
+          },
+          "domain": {
+            "default": "",
+            "title": "Domain",
+            "type": "string"
+          },
+          "enabled": {
+            "default": false,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "max_message_bytes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Message Bytes"
+          },
+          "spam_quarantine_score": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spam Quarantine Score"
+          },
+          "spam_reject_score": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spam Reject Score"
+          }
+        },
+        "title": "Body_ui_hosted_mailboxes_create_ui_hosted_mailboxes_new_post",
+        "type": "object"
+      },
+      "Body_ui_hosted_mailboxes_update_ui_hosted_mailboxes__hosted_mailbox_id__edit_post": {
+        "properties": {
+          "aliases": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aliases"
+          },
+          "domain": {
+            "default": "",
+            "title": "Domain",
+            "type": "string"
+          },
+          "enabled": {
+            "default": false,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "max_message_bytes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Message Bytes"
+          },
+          "spam_quarantine_score": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spam Quarantine Score"
+          },
+          "spam_reject_score": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spam Reject Score"
+          }
+        },
+        "title": "Body_ui_hosted_mailboxes_update_ui_hosted_mailboxes__hosted_mailbox_id__edit_post",
+        "type": "object"
+      },
+      "Body_ui_mailbox_backfill_pause_ui_mailboxes__mailbox_id__backfill_pause_post": {
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "title": "Body_ui_mailbox_backfill_pause_ui_mailboxes__mailbox_id__backfill_pause_post",
+        "type": "object"
+      },
+      "Body_ui_mailbox_replay_ui_mailboxes__mailbox_id__replay_post": {
+        "properties": {
+          "message_id": {
+            "title": "Message Id",
+            "type": "string"
+          },
+          "route_id": {
+            "title": "Route Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "route_id",
+          "message_id"
+        ],
+        "title": "Body_ui_mailbox_replay_ui_mailboxes__mailbox_id__replay_post",
+        "type": "object"
+      },
+      "Body_ui_mailboxes_create_ui_mailboxes_new_post": {
+        "properties": {
+          "enabled": {
+            "default": false,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "folder": {
+            "default": "INBOX",
+            "title": "Folder",
+            "type": "string"
+          },
+          "host": {
+            "title": "Host",
+            "type": "string"
+          },
+          "password": {
+            "title": "Password",
+            "type": "string"
+          },
+          "poll_interval_s": {
+            "default": 300,
+            "title": "Poll Interval S",
+            "type": "integer"
+          },
+          "port": {
+            "title": "Port",
+            "type": "integer"
+          },
+          "use_ssl": {
+            "default": false,
+            "title": "Use Ssl",
+            "type": "boolean"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "host",
+          "port",
+          "username",
+          "password"
+        ],
+        "title": "Body_ui_mailboxes_create_ui_mailboxes_new_post",
+        "type": "object"
+      },
+      "Body_ui_mailboxes_discover_ui_mailboxes_discover_post": {
+        "properties": {
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username"
+        ],
+        "title": "Body_ui_mailboxes_discover_ui_mailboxes_discover_post",
+        "type": "object"
+      },
+      "Body_ui_mailboxes_new_test_ui_mailboxes_new_test_post": {
+        "properties": {
+          "folder": {
+            "default": "INBOX",
+            "title": "Folder",
+            "type": "string"
+          },
+          "host": {
+            "title": "Host",
+            "type": "string"
+          },
+          "password": {
+            "title": "Password",
+            "type": "string"
+          },
+          "poll_interval_s": {
+            "default": 300,
+            "title": "Poll Interval S",
+            "type": "integer"
+          },
+          "port": {
+            "title": "Port",
+            "type": "integer"
+          },
+          "use_ssl": {
+            "default": false,
+            "title": "Use Ssl",
+            "type": "boolean"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "host",
+          "port",
+          "username",
+          "password"
+        ],
+        "title": "Body_ui_mailboxes_new_test_ui_mailboxes_new_test_post",
+        "type": "object"
+      },
+      "Body_ui_mailboxes_update_ui_mailboxes__mailbox_id__edit_post": {
+        "properties": {
+          "enabled": {
+            "default": false,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "folder": {
+            "default": "INBOX",
+            "title": "Folder",
+            "type": "string"
+          },
+          "host": {
+            "title": "Host",
+            "type": "string"
+          },
+          "password": {
+            "default": "",
+            "title": "Password",
+            "type": "string"
+          },
+          "poll_interval_s": {
+            "default": 300,
+            "title": "Poll Interval S",
+            "type": "integer"
+          },
+          "port": {
+            "title": "Port",
+            "type": "integer"
+          },
+          "use_ssl": {
+            "default": false,
+            "title": "Use Ssl",
+            "type": "boolean"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "host",
+          "port",
+          "username"
+        ],
+        "title": "Body_ui_mailboxes_update_ui_mailboxes__mailbox_id__edit_post",
+        "type": "object"
+      },
+      "Body_ui_routes_create_ui_routes_new_post": {
+        "properties": {
+          "add_html_to_text": {
+            "default": false,
+            "title": "Add Html To Text",
+            "type": "boolean"
+          },
+          "config_json": {
+            "default": "",
+            "title": "Config Json",
+            "type": "string"
+          },
+          "enabled": {
+            "default": false,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "endpoint_id": {
+            "title": "Endpoint Id",
+            "type": "string"
+          },
+          "from_domains": {
+            "default": "",
+            "title": "From Domains",
+            "type": "string"
+          },
+          "header_key": {
+            "default": "",
+            "title": "Header Key",
+            "type": "string"
+          },
+          "header_val": {
+            "default": "",
+            "title": "Header Val",
+            "type": "string"
+          },
+          "mapper": {
+            "default": "generic",
+            "title": "Mapper",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "strip_images": {
+            "default": false,
+            "title": "Strip Images",
+            "type": "boolean"
+          },
+          "subject_contains": {
+            "default": "",
+            "title": "Subject Contains",
+            "type": "string"
+          },
+          "to_contains": {
+            "default": "",
+            "title": "To Contains",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "endpoint_id"
+        ],
+        "title": "Body_ui_routes_create_ui_routes_new_post",
+        "type": "object"
+      },
+      "Body_ui_routes_update_ui_routes__route_id__edit_post": {
+        "properties": {
+          "add_html_to_text": {
+            "default": false,
+            "title": "Add Html To Text",
+            "type": "boolean"
+          },
+          "config_json": {
+            "default": "",
+            "title": "Config Json",
+            "type": "string"
+          },
+          "enabled": {
+            "default": false,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "endpoint_id": {
+            "title": "Endpoint Id",
+            "type": "string"
+          },
+          "from_domains": {
+            "default": "",
+            "title": "From Domains",
+            "type": "string"
+          },
+          "header_key": {
+            "default": "",
+            "title": "Header Key",
+            "type": "string"
+          },
+          "header_val": {
+            "default": "",
+            "title": "Header Val",
+            "type": "string"
+          },
+          "mapper": {
+            "default": "generic",
+            "title": "Mapper",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "strip_images": {
+            "default": false,
+            "title": "Strip Images",
+            "type": "boolean"
+          },
+          "subject_contains": {
+            "default": "",
+            "title": "Subject Contains",
+            "type": "string"
+          },
+          "to_contains": {
+            "default": "",
+            "title": "To Contains",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "endpoint_id"
+        ],
+        "title": "Body_ui_routes_update_ui_routes__route_id__edit_post",
+        "type": "object"
+      },
+      "Body_verify_resend_post_auth_verify_resend_post": {
+        "properties": {
+          "csrf_token": {
+            "default": "",
+            "title": "Csrf Token",
+            "type": "string"
+          },
+          "email": {
+            "default": "",
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "title": "Body_verify_resend_post_auth_verify_resend_post",
+        "type": "object"
+      },
+      "BootstrapRequest": {
+        "description": "Request body for project bootstrap.",
+        "properties": {
+          "api_key_name": {
+            "default": "default",
+            "description": "Label for the API key",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Api Key Name",
+            "type": "string"
+          },
+          "name": {
+            "description": "Project display name",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "BootstrapRequest",
+        "type": "object"
+      },
+      "BootstrapResponse": {
+        "properties": {
+          "api_key": {
+            "$ref": "#/components/schemas/ApiKeyOut"
+          },
+          "project_id": {
+            "format": "uuid",
+            "title": "Project Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "api_key"
+        ],
+        "title": "BootstrapResponse",
+        "type": "object"
+      },
+      "ChangePlanIn": {
+        "properties": {
+          "plan_code": {
+            "title": "Plan Code",
+            "type": "string"
+          },
+          "project_id": {
+            "format": "uuid",
+            "title": "Project Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "plan_code"
+        ],
+        "title": "ChangePlanIn",
+        "type": "object"
+      },
+      "ChatRoutePairCreateRequest": {
+        "additionalProperties": false,
+        "description": "Provisioning request for chat endpoint+route pairs.\n\nAttributes:\n    provider: Chat provider target (`\"slack\"` or `\"telegram\"`).\n    route_name: Route display name.\n    endpoint_name: Optional UI-facing endpoint label (currently not persisted).\n    bot_api_key: Provider bot credential used in endpoint auth placement.\n    channel_id: Slack channel ID (required for Slack provider).\n    chat_id: Telegram chat ID string (required for Telegram provider).\n    rule: Optional routing rule object. Defaults to match-any rule.\n    enabled: Initial enabled state for the route.",
+        "properties": {
+          "bot_api_key": {
+            "minLength": 1,
+            "title": "Bot Api Key",
+            "type": "string"
+          },
+          "channel_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel Id"
+          },
+          "chat_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chat Id"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "endpoint_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Endpoint Name"
+          },
+          "provider": {
+            "enum": [
+              "slack",
+              "telegram"
+            ],
+            "title": "Provider",
+            "type": "string"
+          },
+          "route_name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Route Name",
+            "type": "string"
+          },
+          "rule": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule"
+          }
+        },
+        "required": [
+          "provider",
+          "route_name",
+          "bot_api_key"
+        ],
+        "title": "ChatRoutePairCreateRequest",
+        "type": "object"
+      },
+      "ChatRoutePairCreateResponse": {
+        "description": "API response envelope for chat route pair provisioning.\n\nAttributes:\n    provider: Effective provider used for provisioning.\n    endpoint_id: Provisioned or reused endpoint ID.\n    route_id: Provisioned or reused route ID.\n    endpoint_reused: Whether endpoint was reused by exact shape.\n    route_reused: Whether route was reused by exact shape.",
+        "properties": {
+          "endpoint_id": {
+            "format": "uuid",
+            "title": "Endpoint Id",
+            "type": "string"
+          },
+          "endpoint_reused": {
+            "title": "Endpoint Reused",
+            "type": "boolean"
+          },
+          "provider": {
+            "enum": [
+              "slack",
+              "telegram"
+            ],
+            "title": "Provider",
+            "type": "string"
+          },
+          "route_id": {
+            "format": "uuid",
+            "title": "Route Id",
+            "type": "string"
+          },
+          "route_reused": {
+            "title": "Route Reused",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "provider",
+          "endpoint_id",
+          "route_id",
+          "endpoint_reused",
+          "route_reused"
+        ],
+        "title": "ChatRoutePairCreateResponse",
+        "type": "object"
+      },
+      "EndpointCreate": {
+        "properties": {
+          "headers": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Headers",
+            "type": "object"
+          },
+          "timeout_s": {
+            "default": 10,
+            "title": "Timeout S",
+            "type": "integer"
+          },
+          "url": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "EndpointCreate",
+        "type": "object"
+      },
+      "EndpointOut": {
+        "properties": {
+          "headers": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Headers",
+            "type": "object"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "timeout_s": {
+            "title": "Timeout S",
+            "type": "integer"
+          },
+          "url": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "headers",
+          "timeout_s"
+        ],
+        "title": "EndpointOut",
+        "type": "object"
+      },
+      "EndpointUpdate": {
+        "properties": {
+          "headers": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headers"
+          },
+          "timeout_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timeout S"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "format": "uri",
+                "maxLength": 2083,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "title": "EndpointUpdate",
+        "type": "object"
+      },
+      "EventDetailResponse": {
+        "properties": {
+          "attempts": {
+            "title": "Attempts",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Error"
+          },
+          "message": {
+            "$ref": "#/components/schemas/EventMessageSummary"
+          },
+          "route_id": {
+            "format": "uuid",
+            "title": "Route Id",
+            "type": "string"
+          },
+          "routing": {
+            "additionalProperties": true,
+            "title": "Routing",
+            "type": "object"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "route_id",
+          "status",
+          "attempts",
+          "last_error",
+          "created_at",
+          "updated_at",
+          "message",
+          "routing"
+        ],
+        "title": "EventDetailResponse",
+        "type": "object"
+      },
+      "EventListItem": {
+        "properties": {
+          "attempts": {
+            "title": "Attempts",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "route_id": {
+            "format": "uuid",
+            "title": "Route Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "route_id",
+          "status",
+          "attempts",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "EventListItem",
+        "type": "object"
+      },
+      "EventListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EventListItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "EventListResponse",
+        "type": "object"
+      },
+      "EventMessageSummary": {
+        "properties": {
+          "from": {
+            "items": {
+              "type": "string"
+            },
+            "title": "From",
+            "type": "array"
+          },
+          "message_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message Id"
+          },
+          "subject": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subject"
+          },
+          "to": {
+            "items": {
+              "type": "string"
+            },
+            "title": "To",
+            "type": "array"
+          }
+        },
+        "title": "EventMessageSummary",
+        "type": "object"
+      },
+      "GmailCreateRequest": {
+        "properties": {
+          "poll_interval_s": {
+            "default": 300,
+            "title": "Poll Interval S",
+            "type": "integer"
+          },
+          "type": {
+            "const": "gmail",
+            "default": "gmail",
+            "description": "Gmail mailbox",
+            "title": "Type",
+            "type": "string"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username"
+        ],
+        "title": "GmailCreateRequest",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HostedAliasCreate": {
+        "properties": {
+          "alias": {
+            "minLength": 1,
+            "title": "Alias",
+            "type": "string"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "alias"
+        ],
+        "title": "HostedAliasCreate",
+        "type": "object"
+      },
+      "HostedAliasOut": {
+        "properties": {
+          "domain": {
+            "title": "Domain",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "full_address": {
+            "title": "Full Address",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "localpart": {
+            "title": "Localpart",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "id",
+          "localpart",
+          "domain",
+          "full_address",
+          "enabled"
+        ],
+        "title": "HostedAliasOut",
+        "type": "object"
+      },
+      "HostedAliasUpdate": {
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "title": "HostedAliasUpdate",
+        "type": "object"
+      },
+      "HostedCreateRequest": {
+        "properties": {
+          "folder": {
+            "default": "INBOX",
+            "title": "Folder",
+            "type": "string"
+          },
+          "host": {
+            "title": "Host",
+            "type": "string"
+          },
+          "password": {
+            "description": "Plaintext for now; encrypted in Phase 11",
+            "title": "Password",
+            "type": "string"
+          },
+          "poll_interval_s": {
+            "default": 300,
+            "title": "Poll Interval S",
+            "type": "integer"
+          },
+          "port": {
+            "default": 993,
+            "title": "Port",
+            "type": "integer"
+          },
+          "type": {
+            "const": "hosted",
+            "default": "hosted",
+            "description": "Hosted mailbox (IMAP-backed)",
+            "title": "Type",
+            "type": "string"
+          },
+          "use_ssl": {
+            "default": true,
+            "title": "Use Ssl",
+            "type": "boolean"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "host",
+          "username",
+          "password"
+        ],
+        "title": "HostedCreateRequest",
+        "type": "object"
+      },
+      "HostedMailboxCreate": {
+        "properties": {
+          "aliases": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Aliases",
+            "type": "array"
+          },
+          "display": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "policy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HostedMailboxPolicyIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "aliases"
+        ],
+        "title": "HostedMailboxCreate",
+        "type": "object"
+      },
+      "HostedMailboxOut": {
+        "properties": {
+          "addresses": {
+            "items": {
+              "$ref": "#/components/schemas/HostedAliasOut"
+            },
+            "title": "Addresses",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mailbox_id": {
+            "format": "uuid",
+            "title": "Mailbox Id",
+            "type": "string"
+          },
+          "max_message_bytes": {
+            "title": "Max Message Bytes",
+            "type": "integer"
+          },
+          "spam_quarantine_score": {
+            "title": "Spam Quarantine Score",
+            "type": "number"
+          },
+          "spam_reject_score": {
+            "title": "Spam Reject Score",
+            "type": "number"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "mailbox_id",
+          "enabled",
+          "status",
+          "max_message_bytes",
+          "spam_reject_score",
+          "spam_quarantine_score",
+          "created_at",
+          "addresses"
+        ],
+        "title": "HostedMailboxOut",
+        "type": "object"
+      },
+      "HostedMailboxPolicyIn": {
+        "properties": {
+          "max_message_bytes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Message Bytes"
+          },
+          "spam_quarantine_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spam Quarantine Score"
+          },
+          "spam_reject_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spam Reject Score"
+          }
+        },
+        "title": "HostedMailboxPolicyIn",
+        "type": "object"
+      },
+      "HostedMailboxUpdate": {
+        "properties": {
+          "enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enabled"
+          },
+          "policy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HostedMailboxPolicyIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "HostedMailboxUpdate",
+        "type": "object"
+      },
+      "HttpsRoutePairCreateRequest": {
+        "additionalProperties": false,
+        "description": "Provisioning request for HTTPS endpoint+route pairs.\n\nAttributes:\n    route_name: Route display name.\n    endpoint_url: HTTPS destination URL.\n    endpoint_headers: Outbound endpoint headers.\n    timeout_s: Endpoint timeout in seconds.\n    rule: Optional routing rule object. Defaults to match-any.\n    pipeline: Optional transform pipeline payload. Defaults to generic JSON mapper.\n    enabled: Initial enabled state for the route.",
+        "properties": {
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "endpoint_headers": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Endpoint Headers",
+            "type": "object"
+          },
+          "endpoint_url": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "title": "Endpoint Url",
+            "type": "string"
+          },
+          "pipeline": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pipeline"
+          },
+          "route_name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Route Name",
+            "type": "string"
+          },
+          "rule": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule"
+          },
+          "timeout_s": {
+            "default": 10,
+            "maximum": 60.0,
+            "minimum": 1.0,
+            "title": "Timeout S",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "route_name",
+          "endpoint_url"
+        ],
+        "title": "HttpsRoutePairCreateRequest",
+        "type": "object"
+      },
+      "HttpsRoutePairCreateResponse": {
+        "description": "API response envelope for HTTPS route pair provisioning.\n\nAttributes:\n    endpoint_id: Provisioned or reused endpoint ID.\n    route_id: Provisioned or reused route ID.\n    endpoint_reused: Whether endpoint was reused by exact shape.\n    route_reused: Whether route was reused by exact shape.",
+        "properties": {
+          "endpoint_id": {
+            "format": "uuid",
+            "title": "Endpoint Id",
+            "type": "string"
+          },
+          "endpoint_reused": {
+            "title": "Endpoint Reused",
+            "type": "boolean"
+          },
+          "route_id": {
+            "format": "uuid",
+            "title": "Route Id",
+            "type": "string"
+          },
+          "route_reused": {
+            "title": "Route Reused",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "endpoint_id",
+          "route_id",
+          "endpoint_reused",
+          "route_reused"
+        ],
+        "title": "HttpsRoutePairCreateResponse",
+        "type": "object"
+      },
+      "ImapCreateRequest": {
+        "properties": {
+          "folder": {
+            "default": "INBOX",
+            "title": "Folder",
+            "type": "string"
+          },
+          "host": {
+            "title": "Host",
+            "type": "string"
+          },
+          "password": {
+            "description": "Plaintext for now; encrypted in Phase 11",
+            "title": "Password",
+            "type": "string"
+          },
+          "poll_interval_s": {
+            "default": 300,
+            "title": "Poll Interval S",
+            "type": "integer"
+          },
+          "port": {
+            "default": 993,
+            "title": "Port",
+            "type": "integer"
+          },
+          "type": {
+            "const": "imap",
+            "default": "imap",
+            "description": "IMAP mailbox",
+            "title": "Type",
+            "type": "string"
+          },
+          "use_ssl": {
+            "default": true,
+            "title": "Use Ssl",
+            "type": "boolean"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "host",
+          "username",
+          "password"
+        ],
+        "title": "ImapCreateRequest",
+        "type": "object"
+      },
+      "MailboxItem": {
+        "properties": {
+          "folder": {
+            "title": "Folder",
+            "type": "string"
+          },
+          "host": {
+            "title": "Host",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_uid": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Uid"
+          },
+          "poll_interval_s": {
+            "title": "Poll Interval S",
+            "type": "integer"
+          },
+          "port": {
+            "title": "Port",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "use_ssl": {
+            "title": "Use Ssl",
+            "type": "boolean"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "host",
+          "port",
+          "use_ssl",
+          "username",
+          "folder",
+          "status",
+          "poll_interval_s",
+          "updated_at"
+        ],
+        "title": "MailboxItem",
+        "type": "object"
+      },
+      "MailboxTestResult": {
+        "properties": {
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "folder_exists": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folder Exists"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "MailboxTestResult",
+        "type": "object"
+      },
+      "OnboardingTestFlowLifecycleRequest": {
+        "additionalProperties": false,
+        "description": "Finalize/discard request payload marker.\n\nThe client must send an empty JSON object. Route/project scope is always\nresolved server-side from authenticated request context + session.",
+        "properties": {},
+        "title": "OnboardingTestFlowLifecycleRequest",
+        "type": "object"
+      },
+      "OnboardingTestFlowSaveRequest": {
+        "additionalProperties": false,
+        "description": "Save request payload for onboarding test-flow provisioning.\n\nAttributes:\n    mailbox_email: Destination mailbox address selected in Step 1.\n    provider: Step 2 provider (`test_loopback`, `configure`, `slack`, `telegram`).\n    endpoint_url: Explicit endpoint URL for `configure`.\n    api_key: Bot/API key for chat providers.\n    channel_id: Channel/chat identifier for chat providers.\n    enabled: Initial enabled state for the created route.",
+        "properties": {
+          "api_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Api Key"
+          },
+          "channel_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel Id"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "endpoint_url": {
+            "anyOf": [
+              {
+                "maxLength": 2048,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Endpoint Url"
+          },
+          "mailbox_email": {
+            "maxLength": 320,
+            "minLength": 3,
+            "title": "Mailbox Email",
+            "type": "string"
+          },
+          "provider": {
+            "enum": [
+              "test_loopback",
+              "configure",
+              "slack",
+              "telegram"
+            ],
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mailbox_email",
+          "provider"
+        ],
+        "title": "OnboardingTestFlowSaveRequest",
+        "type": "object"
+      },
+      "OnboardingTestFlowSendRequest": {
+        "additionalProperties": false,
+        "description": "Step 3 send request payload.\n\nThe client must send an empty JSON object. Recipient/provider values must\ncome from persisted onboarding Step 2 state, not from the request body.",
+        "properties": {},
+        "title": "OnboardingTestFlowSendRequest",
+        "type": "object"
+      },
+      "PeriodInfo": {
+        "properties": {
+          "end": {
+            "title": "End",
+            "type": "string"
+          },
+          "start": {
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "title": "PeriodInfo",
+        "type": "object"
+      },
+      "PipelineConfig": {
+        "description": "Pydantic model for pipeline configuration.",
+        "properties": {
+          "steps": {
+            "description": "Ordered list of steps. Each step is a mapping with keys: 'name' (str) and optional 'args' (dict).",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Steps",
+            "type": "array"
+          }
+        },
+        "title": "PipelineConfig",
+        "type": "object"
+      },
+      "PlanInfo": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "features": {
+            "additionalProperties": true,
+            "title": "Features",
+            "type": "object"
+          },
+          "limits": {
+            "additionalProperties": true,
+            "title": "Limits",
+            "type": "object"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "limits",
+          "features"
+        ],
+        "title": "PlanInfo",
+        "type": "object"
+      },
+      "ProjectItem": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "created_at"
+        ],
+        "title": "ProjectItem",
+        "type": "object"
+      },
+      "RemainingInfo": {
+        "properties": {
+          "monthly_bytes_out": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Bytes Out"
+          },
+          "monthly_events": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Events"
+          }
+        },
+        "required": [
+          "monthly_events",
+          "monthly_bytes_out"
+        ],
+        "title": "RemainingInfo",
+        "type": "object"
+      },
+      "ReplayResponse": {
+        "properties": {
+          "event_id": {
+            "title": "Event Id",
+            "type": "string"
+          },
+          "queued": {
+            "title": "Queued",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "queued",
+          "event_id"
+        ],
+        "title": "ReplayResponse",
+        "type": "object"
+      },
+      "RouteCreate": {
+        "properties": {
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "endpoint_id": {
+            "format": "uuid",
+            "title": "Endpoint Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "pipeline": {
+            "$ref": "#/components/schemas/PipelineConfig"
+          },
+          "rule": {
+            "$ref": "#/components/schemas/RouteRule"
+          },
+          "signing_secret_kid": {
+            "minLength": 1,
+            "title": "Signing Secret Kid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "endpoint_id",
+          "signing_secret_kid",
+          "rule",
+          "pipeline"
+        ],
+        "title": "RouteCreate",
+        "type": "object"
+      },
+      "RouteOut": {
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "endpoint_id": {
+            "format": "uuid",
+            "title": "Endpoint Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "pipeline": {
+            "$ref": "#/components/schemas/PipelineConfig"
+          },
+          "rule": {
+            "$ref": "#/components/schemas/RouteRule"
+          },
+          "signing_secret_kid": {
+            "title": "Signing Secret Kid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "endpoint_id",
+          "signing_secret_kid",
+          "rule",
+          "pipeline",
+          "enabled"
+        ],
+        "title": "RouteOut",
+        "type": "object"
+      },
+      "RouteRule": {
+        "additionalProperties": true,
+        "description": "Minimal rule schema for routing decisions.\n\nFields:\n    to_contains: substrings that should appear in any recipient email.\n    from_domains: exact sender domains (e.g., \"example.com\").\n    subject_contains: substrings that should appear in the subject.\n    headers_equals: exact matches on normalized header values.\n    attachments_mime: glob patterns matched against attachment content types.",
+        "properties": {
+          "all": {
+            "items": {},
+            "title": "All",
+            "type": "array"
+          },
+          "any": {
+            "items": {},
+            "title": "Any",
+            "type": "array"
+          },
+          "attachments_mime": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Attachments Mime",
+            "type": "array"
+          },
+          "from_contains": {
+            "items": {
+              "type": "string"
+            },
+            "title": "From Contains",
+            "type": "array"
+          },
+          "from_domains": {
+            "items": {
+              "type": "string"
+            },
+            "title": "From Domains",
+            "type": "array"
+          },
+          "from_emails": {
+            "items": {
+              "type": "string"
+            },
+            "title": "From Emails",
+            "type": "array"
+          },
+          "headers_contains": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Headers Contains",
+            "type": "object"
+          },
+          "headers_equals": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Headers Equals",
+            "type": "object"
+          },
+          "negate": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Negate"
+          },
+          "none": {
+            "items": {},
+            "title": "None",
+            "type": "array"
+          },
+          "subject_contains": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Subject Contains",
+            "type": "array"
+          },
+          "subject_regex": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Subject Regex",
+            "type": "array"
+          },
+          "to_contains": {
+            "items": {
+              "type": "string"
+            },
+            "title": "To Contains",
+            "type": "array"
+          },
+          "to_emails": {
+            "items": {
+              "type": "string"
+            },
+            "title": "To Emails",
+            "type": "array"
+          }
+        },
+        "title": "RouteRule",
+        "type": "object"
+      },
+      "RouteUpdate": {
+        "properties": {
+          "enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enabled"
+          },
+          "endpoint_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Endpoint Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "pipeline": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PipelineConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rule": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RouteRule"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "signing_secret_kid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signing Secret Kid"
+          }
+        },
+        "title": "RouteUpdate",
+        "type": "object"
+      },
+      "UpdateMailboxRequest": {
+        "properties": {
+          "folder": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folder"
+          },
+          "host": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Host"
+          },
+          "password": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password"
+          },
+          "poll_interval_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "60..3600",
+            "title": "Poll Interval S"
+          },
+          "port": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Port"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "imap",
+                  "gmail",
+                  "hosted"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type"
+          },
+          "use_ssl": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Use Ssl"
+          },
+          "username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Username"
+          }
+        },
+        "title": "UpdateMailboxRequest",
+        "type": "object"
+      },
+      "UsageCounters": {
+        "properties": {
+          "bytes_in": {
+            "title": "Bytes In",
+            "type": "integer"
+          },
+          "bytes_out": {
+            "title": "Bytes Out",
+            "type": "integer"
+          },
+          "deliveries_attempted": {
+            "title": "Deliveries Attempted",
+            "type": "integer"
+          },
+          "deliveries_succeeded": {
+            "title": "Deliveries Succeeded",
+            "type": "integer"
+          },
+          "events_ingested": {
+            "title": "Events Ingested",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "events_ingested",
+          "deliveries_attempted",
+          "deliveries_succeeded",
+          "bytes_in",
+          "bytes_out"
+        ],
+        "title": "UsageCounters",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "description": "Project-scoped API key. Provide as `X-API-Key: <key>`",
+        "in": "header",
+        "name": "X-API-Key",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "description": "mailwebhook turns inbound emails into reliable webhooks.\n\n### Authentication\nEvery request requires an API key in the HTTP header: `X-API-Key: <your key>`.\n\n### Webhook delivery headers\n- **X-Idempotency-Key**: A deterministic key per (message_id, route_id).\n- **X-MailWebhook-Signature**: HMAC-SHA256 of the raw request body with a timestamp.\n  Format: `t=<unix>, kid=<kid>, v1=<base64(hmac_sha256(t + '.' + body))>`.\n\n#### Python verifier (sketch)\n```py\nimport base64, hashlib, hmac, time\ndef verify(headers, body_bytes, secret_bytes, tolerance_s=300):\n    try:\n        parts = dict(x.strip().split('=', 1) for x in headers['X-MailWebhook-Signature'].split(',') if '=' in x)\n        ts = int(parts['t']); mac_b64 = parts['v1']\n    except Exception: return False\n    if abs(int(time.time()) - ts) > tolerance_s: return False\n    expected = hmac.new(secret_bytes, f\"{ts}.\".encode() + body_bytes, hashlib.sha256).digest()\n    try: provided = base64.b64decode(mac_b64, validate=True)\n    except Exception: return False\n    return hmac.compare_digest(expected, provided)\n```\n",
+    "title": "mailwebhook API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1/billing/plan": {
+      "get": {
+        "description": "Return current plan, period window, usage MTD, and remaining quotas for the authenticated project.",
+        "operationId": "get_billing_plan_v1_billing_plan_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingPlanResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Billing Plan",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/v1/endpoints": {
+      "get": {
+        "operationId": "list_endpoints_v1_endpoints_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EndpointOut"
+                  },
+                  "title": "Response List Endpoints V1 Endpoints Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Endpoints",
+        "tags": [
+          "endpoints"
+        ]
+      },
+      "post": {
+        "operationId": "create_endpoint_v1_endpoints_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndpointCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EndpointOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Endpoint",
+        "tags": [
+          "endpoints"
+        ]
+      }
+    },
+    "/v1/endpoints/{endpoint_id}": {
+      "delete": {
+        "operationId": "delete_endpoint_v1_endpoints__endpoint_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "endpoint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Endpoint Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Endpoint",
+        "tags": [
+          "endpoints"
+        ]
+      },
+      "get": {
+        "operationId": "get_endpoint_v1_endpoints__endpoint_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "endpoint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Endpoint Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EndpointOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Endpoint",
+        "tags": [
+          "endpoints"
+        ]
+      },
+      "patch": {
+        "operationId": "update_endpoint_v1_endpoints__endpoint_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "endpoint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Endpoint Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndpointUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EndpointOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Endpoint",
+        "tags": [
+          "endpoints"
+        ]
+      }
+    },
+    "/v1/events": {
+      "get": {
+        "operationId": "list_events_v1_events_get",
+        "parameters": [
+          {
+            "description": "Filter by status",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by status",
+              "title": "Status"
+            }
+          },
+          {
+            "description": "Filter by route id",
+            "in": "query",
+            "name": "route_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by route id",
+              "title": "Route Id"
+            }
+          },
+          {
+            "description": "Max items per page",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "description": "Max items per page",
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Opaque cursor for pagination",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Opaque cursor for pagination",
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Events",
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/v1/events/{event_id}": {
+      "get": {
+        "operationId": "get_event_detail_v1_events__event_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "title": "Event Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventDetailResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Event Detail",
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/v1/events/{event_id}/attempts": {
+      "get": {
+        "operationId": "get_event_attempts_v1_events__event_id__attempts_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "title": "Event Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AttemptItemRead"
+                  },
+                  "title": "Response Get Event Attempts V1 Events  Event Id  Attempts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Event Attempts",
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/v1/events/{event_id}/replay": {
+      "post": {
+        "description": "Queue a replay for the given `event_id` within the caller's project.\n\n- If the event does not exist or does not belong to the authenticated project, returns 404.\n- On success, a job with topic ``replay_event`` is enqueued for immediate processing.",
+        "operationId": "replay_event_endpoint_v1_events__event_id__replay_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "title": "Event Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplayResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Queue a replay for an event",
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/v1/messages/{message_id}/attachments/{attachment_id}/url": {
+      "get": {
+        "operationId": "get_attachment_url_v1_messages__message_id__attachments__attachment_id__url_get",
+        "parameters": [
+          {
+            "description": "Message database id",
+            "in": "path",
+            "name": "message_id",
+            "required": true,
+            "schema": {
+              "description": "Message database id",
+              "title": "Message Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Attachment id from parsed payload",
+            "in": "path",
+            "name": "attachment_id",
+            "required": true,
+            "schema": {
+              "description": "Attachment id from parsed payload",
+              "title": "Attachment Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Allow reuse within a shorter TTL",
+            "in": "query",
+            "name": "multi_use",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "Allow reuse within a shorter TTL",
+              "title": "Multi Use",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "ttl_seconds",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 86400,
+                  "minimum": 60,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ttl Seconds"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttachmentUrlResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Attachment Url",
+        "tags": [
+          "messages"
+        ]
+      }
+    },
+    "/v1/onboarding/chat-route-pairs": {
+      "post": {
+        "description": "Create or reuse a provider-specific endpoint+route pair.\n\nBehavior:\n    - Returns HTTP 201 when at least one resource is newly created.\n    - Returns HTTP 200 only when both endpoint and route are reused.\n\nArgs:\n    payload: Provider-specific chat route pair request.\n    response: FastAPI response object used for status-code override.\n    ctx: Authenticated project context derived from API key.\n\nReturns:\n    Provisioning result including IDs, reuse flags, and effective provider.\n\nNotes:\n    The optional `rule` payload is forwarded unchanged to the provisioning\n    service, which normalizes and validates the routing contract.",
+        "operationId": "create_chat_route_pair_v1_onboarding_chat_route_pairs_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "slack": {
+                  "summary": "Slack route pair request",
+                  "value": {
+                    "bot_api_key": "xoxb-1234567890",
+                    "channel_id": "C0123456789",
+                    "enabled": true,
+                    "provider": "slack",
+                    "route_name": "Slack alerts route"
+                  }
+                },
+                "slack_with_rule": {
+                  "summary": "Slack route pair request with mailbox rule",
+                  "value": {
+                    "bot_api_key": "xoxb-1234567890",
+                    "channel_id": "C0123456789",
+                    "enabled": true,
+                    "provider": "slack",
+                    "route_name": "Slack mailbox alerts route",
+                    "rule": {
+                      "to_emails": [
+                        "alerts@example.com"
+                      ]
+                    }
+                  }
+                },
+                "telegram": {
+                  "summary": "Telegram route pair request",
+                  "value": {
+                    "bot_api_key": "123456:ABCDEF",
+                    "chat_id": "-10012345",
+                    "enabled": true,
+                    "provider": "telegram",
+                    "route_name": "Telegram alerts route"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/ChatRoutePairCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "endpoint_id": "11111111-1111-1111-1111-111111111111",
+                  "endpoint_reused": true,
+                  "provider": "slack",
+                  "route_id": "22222222-2222-2222-2222-222222222222",
+                  "route_reused": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ChatRoutePairCreateResponse"
+                }
+              }
+            },
+            "description": "Endpoint and route were both reused by exact shape."
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "endpoint_id": "11111111-1111-1111-1111-111111111111",
+                  "endpoint_reused": false,
+                  "provider": "slack",
+                  "route_id": "22222222-2222-2222-2222-222222222222",
+                  "route_reused": false
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ChatRoutePairCreateResponse"
+                }
+              }
+            },
+            "description": "Created one or both resources."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Chat Route Pair",
+        "tags": [
+          "onboarding"
+        ]
+      }
+    },
+    "/v1/onboarding/https-route-pairs": {
+      "post": {
+        "description": "Create or reuse an HTTPS endpoint+route pair.\n\nBehavior:\n    - Returns HTTP 201 when at least one resource is newly created.\n    - Returns HTTP 200 only when both endpoint and route are reused.\n\nArgs:\n    payload: HTTPS route pair request.\n    response: FastAPI response object used for status-code override.\n    ctx: Authenticated project context derived from API key.\n\nReturns:\n    Provisioning result including IDs and reuse flags.",
+        "operationId": "create_https_route_pair_v1_onboarding_https_route_pairs_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "https": {
+                  "summary": "HTTPS route pair request",
+                  "value": {
+                    "enabled": true,
+                    "endpoint_headers": {
+                      "Authorization": "Bearer token"
+                    },
+                    "endpoint_url": "https://api.example.com/mailwebhook",
+                    "route_name": "Primary webhook route",
+                    "timeout_s": 10
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/HttpsRoutePairCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "endpoint_id": "33333333-3333-3333-3333-333333333333",
+                  "endpoint_reused": true,
+                  "route_id": "44444444-4444-4444-4444-444444444444",
+                  "route_reused": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/HttpsRoutePairCreateResponse"
+                }
+              }
+            },
+            "description": "Endpoint and route were both reused by exact shape."
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "endpoint_id": "33333333-3333-3333-3333-333333333333",
+                  "endpoint_reused": false,
+                  "route_id": "44444444-4444-4444-4444-444444444444",
+                  "route_reused": false
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/HttpsRoutePairCreateResponse"
+                }
+              }
+            },
+            "description": "Created one or both resources."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Https Route Pair",
+        "tags": [
+          "onboarding"
+        ]
+      }
+    },
+    "/v1/routes": {
+      "get": {
+        "operationId": "list_routes_v1_routes_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RouteOut"
+                  },
+                  "title": "Response List Routes V1 Routes Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Routes",
+        "tags": [
+          "routes"
+        ]
+      },
+      "post": {
+        "operationId": "create_route_v1_routes_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Route",
+        "tags": [
+          "routes"
+        ]
+      }
+    },
+    "/v1/routes/{route_id}": {
+      "delete": {
+        "operationId": "delete_route_v1_routes__route_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "route_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Route Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Route",
+        "tags": [
+          "routes"
+        ]
+      },
+      "get": {
+        "operationId": "get_route_v1_routes__route_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "route_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Route Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Route",
+        "tags": [
+          "routes"
+        ]
+      },
+      "patch": {
+        "operationId": "update_route_v1_routes__route_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "route_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Route Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Route",
+        "tags": [
+          "routes"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "description": "HTTP destinations for deliveries.",
+      "name": "endpoints"
+    },
+    {
+      "description": "Routing rules and transform pipelines.",
+      "name": "routes"
+    },
+    {
+      "description": "Guided provisioning helpers for first integrations.",
+      "name": "onboarding"
+    },
+    {
+      "description": "Event log & delivery attempts.",
+      "name": "events"
+    }
+  ],
+  "x-mailwebhook-public-api": {
+    "operation_count": 18,
+    "scope_version": "2026-05-01"
+  }
+}
