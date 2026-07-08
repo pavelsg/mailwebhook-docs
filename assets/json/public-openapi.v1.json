@@ -138,6 +138,22 @@
           "route_reused": true
         }
       },
+      "project_api_key_reset_request": {
+        "summary": "Reset project API key request",
+        "value": {
+          "api_key_name": "default"
+        }
+      },
+      "project_api_key_reset_response": {
+        "summary": "Project API key reset response",
+        "value": {
+          "api_key": {
+            "id": "55555555-5555-5555-5555-555555555555",
+            "name": "default",
+            "secret": "mwk_exampleapikeyvalue22222222"
+          }
+        }
+      },
       "signature_header": {
         "summary": "Signature header example",
         "value": "t=1710000000, kid=dev-kid, v1=BASE64_HMAC_BYTES"
@@ -1199,6 +1215,17 @@
           "username"
         ],
         "title": "Body_ui_mailboxes_update_ui_mailboxes__mailbox_id__edit_post",
+        "type": "object"
+      },
+      "Body_ui_project_api_key_reset_ui_project_api_key_reset_post": {
+        "properties": {
+          "password": {
+            "default": "",
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "title": "Body_ui_project_api_key_reset_ui_project_api_key_reset_post",
         "type": "object"
       },
       "Body_ui_routes_create_ui_routes_new_post": {
@@ -2442,6 +2469,229 @@
         "title": "MailboxTestResult",
         "type": "object"
       },
+      "NotificationAdminItem": {
+        "description": "One notification event row returned to operators.",
+        "properties": {
+          "audience": {
+            "additionalProperties": true,
+            "title": "Audience",
+            "type": "object"
+          },
+          "channel": {
+            "title": "Channel",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "dedupe_key": {
+            "title": "Dedupe Key",
+            "type": "string"
+          },
+          "deliveries": {
+            "items": {
+              "$ref": "#/components/schemas/NotificationDeliveryAdminItem"
+            },
+            "title": "Deliveries",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "priority": {
+            "title": "Priority",
+            "type": "string"
+          },
+          "project_id": {
+            "format": "uuid",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "requested_at": {
+            "format": "date-time",
+            "title": "Requested At",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "subject_id": {
+            "title": "Subject Id",
+            "type": "string"
+          },
+          "template_ctx": {
+            "additionalProperties": true,
+            "title": "Template Ctx",
+            "type": "object"
+          },
+          "template_name": {
+            "title": "Template Name",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "project_id",
+          "kind",
+          "channel",
+          "priority",
+          "subject_id",
+          "template_name",
+          "dedupe_key",
+          "status",
+          "requested_at",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "NotificationAdminItem",
+        "type": "object"
+      },
+      "NotificationDeliveryAdminItem": {
+        "description": "One persisted delivery row in notification history.",
+        "properties": {
+          "attempt_no": {
+            "title": "Attempt No",
+            "type": "integer"
+          },
+          "channel": {
+            "title": "Channel",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "latency_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency Ms"
+          },
+          "provider_message_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider Message Id"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "recipient_email": {
+            "title": "Recipient Email",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "channel",
+          "recipient_email",
+          "status",
+          "attempt_no",
+          "created_at"
+        ],
+        "title": "NotificationDeliveryAdminItem",
+        "type": "object"
+      },
+      "NotificationHistoryResponse": {
+        "description": "Notification history search response.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/NotificationAdminItem"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "NotificationHistoryResponse",
+        "type": "object"
+      },
+      "NotificationReplayResponse": {
+        "description": "Response returned after queueing a notification replay.",
+        "properties": {
+          "event_id": {
+            "format": "uuid",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "previous_status": {
+            "title": "Previous Status",
+            "type": "string"
+          },
+          "queued": {
+            "title": "Queued",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "queued",
+          "event_id",
+          "previous_status",
+          "status"
+        ],
+        "title": "NotificationReplayResponse",
+        "type": "object"
+      },
       "OnboardingTestFlowLifecycleRequest": {
         "additionalProperties": false,
         "description": "Finalize/discard request payload marker.\n\nThe client must send an empty JSON object. Route/project scope is always\nresolved server-side from authenticated request context + session.",
@@ -2585,6 +2835,60 @@
           "features"
         ],
         "title": "PlanInfo",
+        "type": "object"
+      },
+      "ProjectApiKeyResetOut": {
+        "description": "One-time replacement API key returned by reset.\n\nAttributes:\n    id: Replacement API key row identifier.\n    name: Replacement API key display name.\n    secret: Plaintext replacement secret. This is returned only once.",
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "secret": {
+            "title": "Secret",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "secret"
+        ],
+        "title": "ProjectApiKeyResetOut",
+        "type": "object"
+      },
+      "ProjectApiKeyResetRequest": {
+        "additionalProperties": false,
+        "description": "Optional request body for API-key reset.\n\nAttributes:\n    api_key_name: Label assigned to the replacement API key.",
+        "properties": {
+          "api_key_name": {
+            "default": "default",
+            "description": "Label assigned to the replacement API key.",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Api Key Name",
+            "type": "string"
+          }
+        },
+        "title": "ProjectApiKeyResetRequest",
+        "type": "object"
+      },
+      "ProjectApiKeyResetResponse": {
+        "description": "Response envelope for API-key reset.\n\nAttributes:\n    api_key: One-time replacement API key payload.",
+        "properties": {
+          "api_key": {
+            "$ref": "#/components/schemas/ProjectApiKeyResetOut"
+          }
+        },
+        "required": [
+          "api_key"
+        ],
+        "title": "ProjectApiKeyResetResponse",
         "type": "object"
       },
       "ProjectItem": {
@@ -4049,6 +4353,102 @@
         ]
       }
     },
+    "/v1/project/api-key/reset": {
+      "post": {
+        "description": "Reset project API keys using the calling API key as the actor.\n\nArgs:\n    payload: Optional replacement key naming payload.\n    ctx: Project context resolved from the current ``X-API-Key``.\n\nReturns:\n    Response envelope containing the replacement key plaintext secret.\n\nNotes:\n    The calling key is disabled during this transaction. Clients must store\n    the returned plaintext secret immediately because it is not persisted or\n    returned again.",
+        "operationId": "reset_project_api_key_endpoint_v1_project_api_key_reset_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "default_name": {
+                  "summary": "Reset using the default key name",
+                  "value": {
+                    "api_key_name": "default"
+                  }
+                }
+              },
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ProjectApiKeyResetRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "api_key": {
+                    "id": "55555555-5555-5555-5555-555555555555",
+                    "name": "default",
+                    "secret": "mwk_exampleapikeyvalue22222222"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectApiKeyResetResponse"
+                }
+              }
+            },
+            "description": "Created a replacement key and disabled all previously enabled keys."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "auth.invalid_api_key",
+                    "details": {},
+                    "message": "Invalid or disabled API key"
+                  }
+                }
+              }
+            },
+            "description": "Missing, invalid, or disabled API key."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reset Project Api Key Endpoint",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
     "/v1/routes": {
       "get": {
         "operationId": "list_routes_v1_routes_get",
@@ -4343,6 +4743,10 @@
   ],
   "tags": [
     {
+      "description": "Bootstrap and project administration.",
+      "name": "projects"
+    },
+    {
       "description": "HTTP destinations for deliveries.",
       "name": "endpoints"
     },
@@ -4360,7 +4764,7 @@
     }
   ],
   "x-mailwebhook-public-api": {
-    "operation_count": 18,
+    "operation_count": 19,
     "scope_version": "2026-05-01"
   }
 }
