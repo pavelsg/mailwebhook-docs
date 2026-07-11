@@ -138,6 +138,81 @@
           "route_reused": true
         }
       },
+      "project_api_key_create_request": {
+        "summary": "Create project API key request",
+        "value": {
+          "name": "automation"
+        }
+      },
+      "project_api_key_create_response": {
+        "summary": "Project API key create response with one-time secret",
+        "value": {
+          "api_key": {
+            "created_at": "2026-07-08T14:00:00Z",
+            "disabled_at": null,
+            "disabled_by": null,
+            "disabled_reason": null,
+            "enabled": true,
+            "id": "88888888-8888-8888-8888-888888888888",
+            "last_used_at": null,
+            "name": "automation",
+            "secret": "mwk_exampleautomationkey333333"
+          }
+        }
+      },
+      "project_api_key_invalid_request_error": {
+        "summary": "Invalid project API key management request",
+        "value": {
+          "error": {
+            "code": "project_api_key.invalid_request",
+            "details": {},
+            "message": "name must not be empty"
+          }
+        }
+      },
+      "project_api_key_list_response": {
+        "summary": "Project API key list response",
+        "value": {
+          "api_keys": [
+            {
+              "created_at": "2026-07-08T12:00:00Z",
+              "disabled_at": null,
+              "disabled_by": null,
+              "disabled_reason": null,
+              "enabled": true,
+              "id": "66666666-6666-6666-6666-666666666666",
+              "last_used_at": "2026-07-08T12:30:00Z",
+              "name": "default"
+            },
+            {
+              "created_at": "2026-07-01T12:00:00Z",
+              "disabled_at": "2026-07-08T13:00:00Z",
+              "disabled_by": "api:66666666-6666-6666-6666-666666666666",
+              "disabled_reason": "manual",
+              "enabled": false,
+              "id": "77777777-7777-7777-7777-777777777777",
+              "last_used_at": null,
+              "name": "old automation"
+            }
+          ]
+        }
+      },
+      "project_api_key_not_found_error": {
+        "summary": "Project API key not found",
+        "value": {
+          "error": {
+            "code": "project_api_key.not_found",
+            "details": {},
+            "message": "API key not found"
+          }
+        }
+      },
+      "project_api_key_rename_request": {
+        "summary": "Rename project API key request",
+        "value": {
+          "name": "production automation"
+        }
+      },
       "project_api_key_reset_request": {
         "summary": "Reset project API key request",
         "value": {
@@ -151,6 +226,21 @@
             "id": "55555555-5555-5555-5555-555555555555",
             "name": "default",
             "secret": "mwk_exampleapikeyvalue22222222"
+          }
+        }
+      },
+      "project_api_key_response": {
+        "summary": "Project API key response without secret",
+        "value": {
+          "api_key": {
+            "created_at": "2026-07-08T14:00:00Z",
+            "disabled_at": null,
+            "disabled_by": null,
+            "disabled_reason": null,
+            "enabled": true,
+            "id": "88888888-8888-8888-8888-888888888888",
+            "last_used_at": null,
+            "name": "production automation"
           }
         }
       },
@@ -1215,6 +1305,33 @@
           "username"
         ],
         "title": "Body_ui_mailboxes_update_ui_mailboxes__mailbox_id__edit_post",
+        "type": "object"
+      },
+      "Body_ui_project_api_key_create_ui_project_api_keys_post": {
+        "properties": {
+          "name": {
+            "default": "",
+            "title": "Name",
+            "type": "string"
+          },
+          "password": {
+            "default": "",
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "title": "Body_ui_project_api_key_create_ui_project_api_keys_post",
+        "type": "object"
+      },
+      "Body_ui_project_api_key_rename_ui_project_api_keys__api_key_id__rename_post": {
+        "properties": {
+          "name": {
+            "default": "",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "title": "Body_ui_project_api_key_rename_ui_project_api_keys__api_key_id__rename_post",
         "type": "object"
       },
       "Body_ui_project_api_key_reset_ui_project_api_key_reset_post": {
@@ -2837,6 +2954,158 @@
         "title": "PlanInfo",
         "type": "object"
       },
+      "ProjectApiKeyCreateRequest": {
+        "additionalProperties": false,
+        "description": "Request body for creating an additional project API key.\n\nAttributes:\n    name: Human-readable label for the new API key.",
+        "properties": {
+          "name": {
+            "description": "Human-readable label for the new API key.",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "ProjectApiKeyCreateRequest",
+        "type": "object"
+      },
+      "ProjectApiKeyCreateResponse": {
+        "description": "Response envelope for creating a project API key.\n\nAttributes:\n    api_key: Created API key metadata plus the one-time plaintext secret.",
+        "properties": {
+          "api_key": {
+            "$ref": "#/components/schemas/ProjectApiKeyCreatedOut"
+          }
+        },
+        "required": [
+          "api_key"
+        ],
+        "title": "ProjectApiKeyCreateResponse",
+        "type": "object"
+      },
+      "ProjectApiKeyCreatedOut": {
+        "description": "One-time API key creation payload.\n\nAttributes:\n    secret: Plaintext API key secret returned only by the create response.",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "disabled_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disabled At"
+          },
+          "disabled_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disabled By"
+          },
+          "disabled_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disabled Reason"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_used_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Used At"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "secret": {
+            "title": "Secret",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "last_used_at",
+          "enabled",
+          "disabled_at",
+          "disabled_reason",
+          "disabled_by",
+          "secret"
+        ],
+        "title": "ProjectApiKeyCreatedOut",
+        "type": "object"
+      },
+      "ProjectApiKeyListResponse": {
+        "description": "Response envelope for listing project API keys.\n\nAttributes:\n    api_keys: Project-owned API keys without plaintext secrets or hashes.",
+        "properties": {
+          "api_keys": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectApiKeySummaryOut"
+            },
+            "title": "Api Keys",
+            "type": "array"
+          }
+        },
+        "required": [
+          "api_keys"
+        ],
+        "title": "ProjectApiKeyListResponse",
+        "type": "object"
+      },
+      "ProjectApiKeyRenameRequest": {
+        "additionalProperties": false,
+        "description": "Request body for renaming a project API key.\n\nAttributes:\n    name: New human-readable API key label.",
+        "properties": {
+          "name": {
+            "description": "New human-readable API key label.",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "ProjectApiKeyRenameRequest",
+        "type": "object"
+      },
       "ProjectApiKeyResetOut": {
         "description": "One-time replacement API key returned by reset.\n\nAttributes:\n    id: Replacement API key row identifier.\n    name: Replacement API key display name.\n    secret: Plaintext replacement secret. This is returned only once.",
         "properties": {
@@ -2889,6 +3158,100 @@
           "api_key"
         ],
         "title": "ProjectApiKeyResetResponse",
+        "type": "object"
+      },
+      "ProjectApiKeyResponse": {
+        "description": "Response envelope for one project API key.\n\nAttributes:\n    api_key: Project API key metadata without secret material.",
+        "properties": {
+          "api_key": {
+            "$ref": "#/components/schemas/ProjectApiKeySummaryOut"
+          }
+        },
+        "required": [
+          "api_key"
+        ],
+        "title": "ProjectApiKeyResponse",
+        "type": "object"
+      },
+      "ProjectApiKeySummaryOut": {
+        "description": "Public API key metadata without secret material.\n\nAttributes:\n    id: API key row identifier.\n    name: Human-readable API key label.\n    created_at: API key creation timestamp.\n    last_used_at: Last successful authentication timestamp.\n    enabled: Whether the key can authenticate requests.\n    disabled_at: Timestamp when the key was disabled.\n    disabled_reason: Stable reason code for disable state.\n    disabled_by: Actor string that disabled the key.",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "disabled_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disabled At"
+          },
+          "disabled_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disabled By"
+          },
+          "disabled_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disabled Reason"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_used_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Used At"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "last_used_at",
+          "enabled",
+          "disabled_at",
+          "disabled_reason",
+          "disabled_by"
+        ],
+        "title": "ProjectApiKeySummaryOut",
         "type": "object"
       },
       "ProjectItem": {
@@ -3407,24 +3770,6 @@
       "get": {
         "description": "Return current plan, period window, usage MTD, and remaining quotas for the authenticated project.",
         "operationId": "get_billing_plan_v1_billing_plan_get",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -3456,24 +3801,6 @@
     "/v1/endpoints": {
       "get": {
         "operationId": "list_endpoints_v1_endpoints_get",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -3507,24 +3834,6 @@
       },
       "post": {
         "operationId": "create_endpoint_v1_endpoints_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3576,22 +3885,6 @@
               "title": "Endpoint Id",
               "type": "string"
             }
-          },
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -3625,22 +3918,6 @@
               "format": "uuid",
               "title": "Endpoint Id",
               "type": "string"
-            }
-          },
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
             }
           }
         ],
@@ -3682,22 +3959,6 @@
               "format": "uuid",
               "title": "Endpoint Id",
               "type": "string"
-            }
-          },
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
             }
           }
         ],
@@ -3810,22 +4071,6 @@
               "description": "Opaque cursor for pagination",
               "title": "Cursor"
             }
-          },
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -3868,22 +4113,6 @@
               "title": "Event Id",
               "type": "string"
             }
-          },
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -3925,22 +4154,6 @@
             "schema": {
               "title": "Event Id",
               "type": "string"
-            }
-          },
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
             }
           }
         ],
@@ -3988,22 +4201,6 @@
             "schema": {
               "title": "Event Id",
               "type": "string"
-            }
-          },
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
             }
           }
         ],
@@ -4090,22 +4287,6 @@
               ],
               "title": "Ttl Seconds"
             }
-          },
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -4140,24 +4321,6 @@
       "post": {
         "description": "Create or reuse a provider-specific endpoint+route pair.\n\nBehavior:\n    - Returns HTTP 201 when at least one resource is newly created.\n    - Returns HTTP 200 only when both endpoint and route are reused.\n\nArgs:\n    payload: Provider-specific chat route pair request.\n    response: FastAPI response object used for status-code override.\n    ctx: Authenticated project context derived from API key.\n\nReturns:\n    Provisioning result including IDs, reuse flags, and effective provider.\n\nNotes:\n    The optional `rule` payload is forwarded unchanged to the provisioning\n    service, which normalizes and validates the routing contract.",
         "operationId": "create_chat_route_pair_v1_onboarding_chat_route_pairs_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4261,24 +4424,6 @@
       "post": {
         "description": "Create or reuse an HTTPS endpoint+route pair.\n\nBehavior:\n    - Returns HTTP 201 when at least one resource is newly created.\n    - Returns HTTP 200 only when both endpoint and route are reused.\n\nArgs:\n    payload: HTTPS route pair request.\n    response: FastAPI response object used for status-code override.\n    ctx: Authenticated project context derived from API key.\n\nReturns:\n    Provisioning result including IDs and reuse flags.",
         "operationId": "create_https_route_pair_v1_onboarding_https_route_pairs_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4357,24 +4502,6 @@
       "post": {
         "description": "Reset project API keys using the calling API key as the actor.\n\nArgs:\n    payload: Optional replacement key naming payload.\n    ctx: Project context resolved from the current ``X-API-Key``.\n\nReturns:\n    Response envelope containing the replacement key plaintext secret.\n\nNotes:\n    The calling key is disabled during this transaction. Clients must store\n    the returned plaintext secret immediately because it is not persisted or\n    returned again.",
         "operationId": "reset_project_api_key_endpoint_v1_project_api_key_reset_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4449,27 +4576,335 @@
         ]
       }
     },
-    "/v1/routes": {
+    "/v1/project/api-keys": {
       "get": {
-        "operationId": "list_routes_v1_routes_get",
+        "description": "List API keys scoped to the calling key's project.\n\nArgs:\n    ctx: Project context resolved from the current ``X-API-Key``.\n\nReturns:\n    Response envelope containing project API key metadata only.",
+        "operationId": "list_project_api_keys_endpoint_v1_project_api_keys_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "api_keys": [
+                    {
+                      "created_at": "2026-07-08T12:00:00Z",
+                      "enabled": true,
+                      "id": "66666666-6666-6666-6666-666666666666",
+                      "last_used_at": "2026-07-08T12:30:00Z",
+                      "name": "default"
+                    },
+                    {
+                      "created_at": "2026-07-01T12:00:00Z",
+                      "disabled_at": "2026-07-08T13:00:00Z",
+                      "disabled_by": "api:66666666-6666-6666-6666-666666666666",
+                      "disabled_reason": "manual",
+                      "enabled": false,
+                      "id": "77777777-7777-7777-7777-777777777777",
+                      "name": "old automation"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectApiKeyListResponse"
+                }
+              }
+            },
+            "description": "List project API keys without plaintext secrets."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "auth.invalid_api_key",
+                    "details": {},
+                    "message": "Invalid or disabled API key"
+                  }
+                }
+              }
+            },
+            "description": "Missing, invalid, or disabled API key."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Project Api Keys Endpoint",
+        "tags": [
+          "projects"
+        ]
+      },
+      "post": {
+        "description": "Create an additional API key for the calling key's project.\n\nArgs:\n    payload: API key creation request body.\n    ctx: Project context resolved from the current ``X-API-Key``.\n\nReturns:\n    Created key metadata plus the one-time plaintext secret.",
+        "operationId": "create_project_api_key_endpoint_v1_project_api_keys_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "automation": {
+                  "summary": "Create an automation key",
+                  "value": {
+                    "name": "automation"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/ProjectApiKeyCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "api_key": {
+                    "created_at": "2026-07-08T14:00:00Z",
+                    "enabled": true,
+                    "id": "88888888-8888-8888-8888-888888888888",
+                    "name": "automation",
+                    "secret": "mwk_exampleautomationkey333333"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectApiKeyCreateResponse"
+                }
+              }
+            },
+            "description": "Create an additional project API key and return its secret once."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "project_api_key.invalid_request",
+                    "details": {},
+                    "message": "name must not be empty"
+                  }
+                }
+              }
+            },
+            "description": "Invalid API key management request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "auth.invalid_api_key",
+                    "details": {},
+                    "message": "Invalid or disabled API key"
+                  }
+                }
+              }
+            },
+            "description": "Missing, invalid, or disabled API key."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Project Api Key Endpoint",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/project/api-keys/{api_key_id}": {
+      "delete": {
+        "description": "Soft-disable one API key scoped to the calling key's project.\n\nArgs:\n    api_key_id: API key identifier from the path.\n    ctx: Project context resolved from the current ``X-API-Key``.\n\nReturns:\n    Empty ``204 No Content`` response after the key is disabled.",
+        "operationId": "disable_project_api_key_endpoint_v1_project_api_keys__api_key_id__delete",
         "parameters": [
           {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
+            "in": "path",
+            "name": "api_key_id",
+            "required": true,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
+              "format": "uuid",
+              "title": "Api Key Id",
+              "type": "string"
             }
           }
         ],
+        "responses": {
+          "204": {
+            "description": "Soft-disabled the project API key."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "auth.invalid_api_key",
+                    "details": {},
+                    "message": "Invalid or disabled API key"
+                  }
+                }
+              }
+            },
+            "description": "Missing, invalid, or disabled API key."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "project_api_key.not_found",
+                    "details": {},
+                    "message": "API key not found"
+                  }
+                }
+              }
+            },
+            "description": "API key was not found in the calling project."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Disable Project Api Key Endpoint",
+        "tags": [
+          "projects"
+        ]
+      },
+      "patch": {
+        "description": "Rename one API key scoped to the calling key's project.\n\nArgs:\n    api_key_id: API key identifier from the path.\n    payload: API key rename request body.\n    ctx: Project context resolved from the current ``X-API-Key``.\n\nReturns:\n    Updated key metadata without secret material.",
+        "operationId": "rename_project_api_key_endpoint_v1_project_api_keys__api_key_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "api_key_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Api Key Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "rename": {
+                  "summary": "Rename an API key",
+                  "value": {
+                    "name": "production automation"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/ProjectApiKeyRenameRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "api_key": {
+                    "created_at": "2026-07-08T14:00:00Z",
+                    "enabled": true,
+                    "id": "88888888-8888-8888-8888-888888888888",
+                    "name": "production automation"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectApiKeyResponse"
+                }
+              }
+            },
+            "description": "Rename a project API key."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "project_api_key.invalid_request",
+                    "details": {},
+                    "message": "name must not be empty"
+                  }
+                }
+              }
+            },
+            "description": "Invalid API key management request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "auth.invalid_api_key",
+                    "details": {},
+                    "message": "Invalid or disabled API key"
+                  }
+                }
+              }
+            },
+            "description": "Missing, invalid, or disabled API key."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "project_api_key.not_found",
+                    "details": {},
+                    "message": "API key not found"
+                  }
+                }
+              }
+            },
+            "description": "API key was not found in the calling project."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rename Project Api Key Endpoint",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/routes": {
+      "get": {
+        "operationId": "list_routes_v1_routes_get",
         "responses": {
           "200": {
             "content": {
@@ -4503,24 +4938,6 @@
       },
       "post": {
         "operationId": "create_route_v1_routes_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4572,22 +4989,6 @@
               "title": "Route Id",
               "type": "string"
             }
-          },
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -4621,22 +5022,6 @@
               "format": "uuid",
               "title": "Route Id",
               "type": "string"
-            }
-          },
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
             }
           }
         ],
@@ -4678,22 +5063,6 @@
               "format": "uuid",
               "title": "Route Id",
               "type": "string"
-            }
-          },
-          {
-            "in": "header",
-            "name": "x-api-key",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Api-Key"
             }
           }
         ],
@@ -4741,6 +5110,12 @@
       "ApiKeyAuth": []
     }
   ],
+  "servers": [
+    {
+      "description": "Production API",
+      "url": "https://app.mailwebhook.com"
+    }
+  ],
   "tags": [
     {
       "description": "Bootstrap and project administration.",
@@ -4764,7 +5139,7 @@
     }
   ],
   "x-mailwebhook-public-api": {
-    "operation_count": 19,
+    "operation_count": 23,
     "scope_version": "2026-05-01"
   }
 }
