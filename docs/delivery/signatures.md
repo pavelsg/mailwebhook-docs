@@ -216,6 +216,10 @@ app.post(
 );
 ```
 
+## Next step: build your receiver
+
+After you choose a verifier pattern, use [Build your application receiver](https://blog.mailwebhook.com/blog/inbound-email-webhook-nodejs-python-go/) for complete Node.js, Python, and Go receiver examples. The guide shows how to capture the raw body, verify the signature, process the payload, and return a successful webhook response.
+
 ## Common verification mistakes
 
 - Using parsed JSON instead of raw request body bytes.

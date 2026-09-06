@@ -224,6 +224,8 @@ A successful first delivery has three signs:
 
 Open **Events** to inspect event status, message metadata, and **Delivery Attempts History**.
 
+After you confirm the first delivery, build the receiving service that will handle real webhook requests. Use [Build your application receiver](https://blog.mailwebhook.com/blog/inbound-email-webhook-nodejs-python-go/) for Node.js, Python, and Go examples that accept MailWebhook payloads and verify signed deliveries.
+
 ## Common errors
 
 ### No webhook request arrived

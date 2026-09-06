@@ -131,6 +131,10 @@ For a route that uses `map.generic_json`, the payload includes `meta.source` set
 
 The exact payload depends on your route pipeline. See [Webhook payload reference] for mapper choices and [Generic JSON] for the full default payload contract.
 
+## Send Gmail messages to Slack
+
+After Gmail events are arriving in MailWebhook, use [Send Gmail messages to Slack] to route selected Gmail messages into a Slack channel. Start with a narrow route rule and confirm the MailWebhook event before checking the Slack result.
+
 ## Backfill older Gmail messages
 
 Normal Gmail setup starts from the current mailbox cursor. To ingest older messages, open the mailbox actions menu and start **Backfill**.
@@ -193,4 +197,5 @@ If you need to inspect provider-real message fields, send a normal email to the 
 [Webhook payload reference]: {% link docs/payloads/webhook-payload-reference.md %}
 [Generic JSON]: {% link docs/routes/pipeline/generic_json.md %}
 [Webhook retries and replay]: {% link docs/delivery/retries-and-replay.md %}
+[Send Gmail messages to Slack]: {% link docs/recipes/slack-email-webhooks.md %}
 [Gmail to webhook]: https://www.mailwebhook.com/gmail-to-webhook
