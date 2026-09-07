@@ -42,6 +42,11 @@ Open the MailWebhook app and go to **Onboarding**. If the modal is closed, click
 
 In **1. Mailbox**, use the generated loopback address or click **Add** to connect a real mailbox.
 
+<figure>
+  <img src="/assets/images/guides/first-webhook/mailbox.webp" alt="Setup Wizard modal showing a selected loopback mailbox beside the Webhook Preview panel." width="844" height="410" loading="lazy">
+  <figcaption>The Setup Wizard keeps the selected mailbox and Webhook Preview visible together during the first delivery flow.</figcaption>
+</figure>
+
 Supported mailbox sources include:
 
 - Gmail
@@ -58,6 +63,11 @@ In **2. Endpoint**, choose one of these options:
 
 - **Configure**: paste your public webhook URL.
 - **Test loopback**: use MailWebhook's built-in test destination for a UI-only first pass.
+
+<figure>
+  <img src="/assets/images/guides/first-webhook/endpoint.webp" alt="Setup Wizard modal showing endpoint provider choices beside the Webhook Preview panel." width="844" height="380" loading="lazy">
+  <figcaption>Select Test loopback for a UI-only first pass, or switch to Configure when your public endpoint is ready.</figcaption>
+</figure>
 
 Click **Save**.
 
@@ -87,6 +97,13 @@ The preview can show:
 - `curl`
 - Python
 - Node.js
+
+When you need the full delivery record, open the delivered event from **Events** and inspect the delivery attempt response.
+
+<figure>
+  <img src="/assets/images/guides/first-webhook/delivery.webp" alt="Event Details modal showing a delivered first-webhook test event and successful response inspection." width="900" height="648" loading="lazy">
+  <figcaption>Use Event Details to verify the delivered status, attempt latency, and receiver response.</figcaption>
+</figure>
 
 For a configured endpoint, your receiver should also see a JSON `POST` request with `Content-Type: application/json`.
 

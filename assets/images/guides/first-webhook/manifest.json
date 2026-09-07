@@ -1,0 +1,56 @@
+{
+  "capture_date": "2026-09-06",
+  "capture_timezone": "Europe/Madrid",
+  "capture_tool": "Codex in-app browser with local ImageMagick redaction and WebP conversion",
+  "app_url": "https://app.mailwebhook.com",
+  "product_revision": {
+    "value": null,
+    "note": "The live app UI and checked response headers did not expose a deploy or product revision during capture."
+  },
+  "screenshots": [
+    {
+      "file": "mailbox.webp",
+      "source_url": "https://app.mailwebhook.com/ui/onboarding",
+      "page_placement": "Fast path: use Setup Wizard / 1. Choose the mailbox",
+      "caption": "The Setup Wizard keeps the selected mailbox and Webhook Preview visible together during the first delivery flow.",
+      "alt": "Setup Wizard modal showing a selected loopback mailbox beside the Webhook Preview panel.",
+      "redactions": [
+        "Selected mailbox address replaced with first-test@loopback.mailwebhook.com."
+      ],
+      "dimensions": {
+        "width": 844,
+        "height": 410
+      }
+    },
+    {
+      "file": "endpoint.webp",
+      "source_url": "https://app.mailwebhook.com/ui/onboarding",
+      "page_placement": "Fast path: use Setup Wizard / 2. Save the endpoint",
+      "caption": "Select Test loopback for a UI-only first pass, or switch to Configure when your public endpoint is ready.",
+      "alt": "Setup Wizard modal showing endpoint provider choices beside the Webhook Preview panel.",
+      "redactions": [
+        "Selected mailbox address replaced with first-test@loopback.mailwebhook.com."
+      ],
+      "dimensions": {
+        "width": 844,
+        "height": 380
+      }
+    },
+    {
+      "file": "delivery.webp",
+      "source_url": "https://app.mailwebhook.com/ui/events",
+      "page_placement": "Fast path: use Setup Wizard / 4. Inspect the webhook",
+      "caption": "Use Event Details to verify the delivered status, attempt latency, and receiver response.",
+      "alt": "Event Details modal showing a delivered first-webhook test event and successful response inspection.",
+      "redactions": [
+        "Route name replaced with First Webhook Test.",
+        "Message-Id, subject, sender, and recipient replaced with synthetic values.",
+        "Response payload replaced with synthetic status, idempotency key, and signature values."
+      ],
+      "dimensions": {
+        "width": 900,
+        "height": 648
+      }
+    }
+  ]
+}
