@@ -109,6 +109,13 @@ Check both places:
 
 The delivery is successful in MailWebhook when Slack returns a `2xx` HTTP response.
 
+The Slack channel result should agree with the MailWebhook event: same synthetic subject, sender, and message body. In the captured test, MailWebhook recorded one delivered attempt and Slack displayed the message from the MailWebhook app. The visible body is `This is a synthetic test message.`
+
+<figure>
+  <img src="/assets/images/guides/slack/result.webp" alt="Slack channel message from the MailWebhook app showing the synthetic subject Hello from mailwebhook, sender tester@example.com, and test body." width="430" height="104" loading="lazy">
+  <figcaption>Slack shows the MailWebhook app message with the same synthetic subject, sender, and body used by the route test event.</figcaption>
+</figure>
+
 ## Manual setup
 
 Use this path when you want to configure the endpoint and route JSON directly.
@@ -205,6 +212,14 @@ Use `html_to_text` before the mapper when the source emails are mostly HTML.
   }
 }
 ```
+
+
+A saved route should show cropped sections from the current MailWebhook route modal: the route name, redacted Slack endpoint, enabled state, and Rule & Pipeline JSON editor. The captured test route uses only synthetic sender, recipient, subject, and header values. The screenshot labels the secret destination as `Slack test endpoint [redacted URL]`. The endpoint URL is redacted because Slack webhook URLs and bot tokens are credentials.
+
+<figure>
+  <img src="/assets/images/guides/slack/route.webp" alt="Cropped sections from the current MailWebhook Edit Route modal showing the synthetic route name, redacted Slack endpoint, enabled route toggle, and Rule and Pipeline JSON editor." width="620" height="687" loading="lazy">
+  <figcaption>Cropped sections from the current route modal show the enabled Slack test route, redacted destination, and JSON configuration area used for the synthetic Slack delivery.</figcaption>
+</figure>
 
 ## Endpoint behavior
 

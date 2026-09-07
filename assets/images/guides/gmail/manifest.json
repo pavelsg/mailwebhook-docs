@@ -1,0 +1,60 @@
+{
+  "capture_date": "2026-09-07",
+  "capture_timezone": "Europe/Madrid",
+  "capture_tool": "Codex in-app browser with full-page capture, local ImageMagick cropping/redaction, and WebP conversion",
+  "app_url": "https://app.mailwebhook.com",
+  "product_revision": {
+    "value": null,
+    "note": "The live app UI and checked response headers did not expose a deploy or product revision during capture."
+  },
+  "screenshots": [
+    {
+      "file": "provider-label.webp",
+      "source_url": "https://app.mailwebhook.com/ui/mailboxes",
+      "page_placement": "Connection steps / Gmail provider and label ID field",
+      "caption": "Select Gmail and enter a supported label ID such as INBOX when you want MailWebhook to watch only that Gmail label.",
+      "alt": "Add Mailbox modal with Gmail selected and INBOX entered in the optional Gmail label ID field.",
+      "redactions": [
+        "Cropped modal excludes the live mailbox table behind the overlay.",
+        "INBOX is a supported Gmail system label ID entered for the screenshot only; the form was not submitted."
+      ],
+      "dimensions": {
+        "width": 800,
+        "height": 658
+      }
+    },
+    {
+      "file": "connected-mailbox.webp",
+      "source_url": "https://app.mailwebhook.com/ui/mailboxes",
+      "page_placement": "What happens after consent / Mailboxes table",
+      "caption": "After OAuth, the Gmail mailbox appears in Mailboxes with type gmail and Enabled status.",
+      "alt": "Mailboxes table excerpt showing a Gmail mailbox row with type gmail and Enabled status.",
+      "redactions": [
+        "Connected Gmail mailbox address replaced with gmail-user@example.com.",
+        "Last updated timestamp normalized to synthetic documentation data.",
+        "Table excerpt keeps the observed Gmail row while omitting unrelated mailbox rows."
+      ],
+      "dimensions": {
+        "width": 1254,
+        "height": 111
+      }
+    },
+    {
+      "file": "received-event.webp",
+      "source_url": "https://app.mailwebhook.com/ui/events",
+      "page_placement": "Verify payload and delivery / Event Details",
+      "caption": "A delivered Gmail mailbox event confirms the Gmail route reached the test receiver and returned a successful response.",
+      "alt": "Event Details modal for a delivered Gmail mailbox event with message summary, delivery attempt, latency, HTTP 200 status, and receiver response.",
+      "redactions": [
+        "Event identifier cropped out of the screenshot.",
+        "Route name replaced with Gmail mailbox to test receiver.",
+        "Message-Id, subject, sender, and recipient replaced with synthetic values.",
+        "Live order content and mailbox details removed; successful attempt status, response code, latency, and receiver response layout preserved."
+      ],
+      "dimensions": {
+        "width": 900,
+        "height": 623
+      }
+    }
+  ]
+}

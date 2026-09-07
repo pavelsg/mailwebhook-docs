@@ -1,0 +1,69 @@
+{
+  "task_id": "T14",
+  "asset_group": "crm-intake",
+  "capture_date": "2026-09-07",
+  "timezone": "Europe/Madrid",
+  "recipe": "docs/recipes/crm-lead-email-webhook.md",
+  "purpose": "Generic CRM intake payload verification using synthetic contact information.",
+  "sample_lead_email": {
+    "subject": "New lead from website",
+    "from": "forms@example.com",
+    "to": "leads@example.com",
+    "fields": {
+      "Full Name": "Ada Lovelace",
+      "Email": "ada@example.com",
+      "Company": "Example Co",
+      "Phone": "+1 555 0100",
+      "Lead Source": "Website demo form",
+      "Message": "I would like a product demo"
+    }
+  },
+  "verification": {
+    "status": "passed",
+    "method": "Executed the documented map.custom_json mapper through MailWebhook TransformPipeline with the synthetic lead email.",
+    "raw_field_count": 6,
+    "checked_paths": [
+      "type",
+      "external_id",
+      "lead.name",
+      "lead.email",
+      "lead.company",
+      "lead.phone",
+      "lead.lead_source",
+      "lead.message",
+      "email.from",
+      "email.subject",
+      "raw_fields",
+      "attachments"
+    ]
+  },
+  "screenshots": [
+    {
+      "file": "mapper.webp",
+      "width": 760,
+      "height": 1900,
+      "source": "Current MailWebhook /ui/routes Edit Route modal for a synthetic CRM intake route, stacked from multiple scroll positions for mobile readability.",
+      "caption": "CRM intake route mapper configured in the current route editor.",
+      "alt": "Current MailWebhook Edit Route modal showing a CRM intake route, redacted endpoint, enabled route toggle, and Custom JSON mapper fields for lead extraction.",
+      "redactions": [
+        "Operational endpoint URL replaced with CRM intake test receiver [redacted URL].",
+        "Hosted mailbox project address replaced with leads@example.com."
+      ]
+    },
+    {
+      "file": "captured-request.webp",
+      "width": 760,
+      "height": 1542,
+      "source": "Rendered from the verified MailWebhook TransformPipeline output for the documented mapper and synthetic lead email.",
+      "caption": "CRM-shaped intake request body produced by the documented mapper.",
+      "alt": "CRM intake payload verification showing HTTP POST status, JSON request body, lead fields for Ada Lovelace, raw extracted fields, and an empty attachments array.",
+      "redactions": [
+        "No live endpoint URL, signing secret, idempotency key, route UUID from production, or real contact data is included."
+      ]
+    }
+  ],
+  "limitations": [
+    "No HubSpot, Salesforce, or other named CRM record was created or claimed for this task.",
+    "This task verifies the generic CRM-shaped intake request body only. Named CRM write verification belongs to a later destination-specific task."
+  ]
+}

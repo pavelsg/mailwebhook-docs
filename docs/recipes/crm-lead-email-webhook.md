@@ -226,6 +226,11 @@ Use `map.custom_json` as the final pipeline step.
 
 This mapper keeps the CRM body focused while preserving the MailWebhook event id, route id, source type, message id, original sender, subject, normalized extracted fields, ordered extracted fields, body text, and attachment metadata.
 
+<figure>
+  <img src="/assets/images/guides/crm-intake/mapper.webp" alt="Current MailWebhook Edit Route modal showing a CRM intake route, redacted endpoint, enabled route toggle, and Custom JSON mapper fields for lead extraction." width="760" height="1900" loading="lazy">
+  <figcaption>The route editor can hold the CRM mapper directly. This synthetic route redacts operational values; keep the same field paths when your form email uses the labels shown above.</figcaption>
+</figure>
+
 ## Full route JSON example
 
 ```json
@@ -312,7 +317,7 @@ For the Custom JSON mapper above, the body has this shape:
   "mailwebhook": {
     "event_id": "6ff49aa1-7050-4ad1-95d9-2711f2ca7e88",
     "route_id": "2f3713bf-88cc-46c6-aaa3-ea9d6e9d20f3",
-    "source_type": "gmail",
+    "source_type": "hosted",
     "message_id": "<lead-4482@example.com>"
   },
   "lead": {
@@ -342,6 +347,11 @@ For the Custom JSON mapper above, the body has this shape:
 }
 ```
 
+<figure>
+  <img src="/assets/images/guides/crm-intake/captured-request.webp" alt="CRM intake payload verification showing HTTP POST status, JSON request body, lead fields for Ada Lovelace, raw extracted fields, and an empty attachments array." width="760" height="1542" loading="lazy">
+  <figcaption>This payload verification uses the documented mapper and synthetic lead email. It shows the CRM-shaped request body your receiver accepts before any destination-specific CRM write.</figcaption>
+</figure>
+
 MailWebhook also sends:
 
 - `X-MailWebhook-Signature`
@@ -359,10 +369,10 @@ A working CRM lead route has these signs:
 - The event matched the CRM lead route.
 - The request body contains `type`, `external_id`, `lead`, `email`, and `raw_fields`.
 - The delivery attempt returned `2xx`.
-- The receiver created or enqueued exactly one CRM lead.
-- Replay of the same event does not create a duplicate lead.
+- Your receiver accepted or durably enqueued the lead before returning `2xx`.
+- Replay of the same event uses the same idempotency key so your receiver can avoid duplicates.
 
-Use **Webhook Preview** or **Events** to compare the delivered request body with the CRM record created by your receiver.
+Use **Webhook Preview** or **Events** to compare the delivered request body with your receiver logs or intake queue. If your receiver writes to a CRM, compare the queued lead with the CRM record after that integration is tested.
 
 ## Common failure checks
 

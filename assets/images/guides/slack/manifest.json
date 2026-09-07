@@ -1,0 +1,63 @@
+{
+  "capture_date": "2026-09-07",
+  "capture_timezone": "Europe/Madrid",
+  "capture_tool": "Codex in-app browser with local ImageMagick cropping, redaction, and WebP conversion",
+  "mailwebhook_app_url": "https://app.mailwebhook.com",
+  "slack_workspace_url": "redacted: Slack workspace and channel identifiers omitted from the public asset manifest.",
+  "product_revision": {
+    "value": null,
+    "note": "The live app UI and checked response headers did not expose a deploy or product revision during capture."
+  },
+  "test_event": {
+    "route_name": "Slack recipe screenshot test",
+    "mailwebhook_status": "Delivered",
+    "attempts": 1,
+    "created_at_ui": "2026-09-07 13:37:35",
+    "slack_message_time_ui": "3:37 PM",
+    "synthetic_message": {
+      "subject": "Hello from mailwebhook",
+      "from": "Tester <tester@example.com>",
+      "to": "you@example.com",
+      "body": "This is a synthetic test message."
+    },
+    "relationship": "The MailWebhook event row for the Slack recipe screenshot test showed Delivered with one attempt, and Slack displayed the MailWebhook app message with the same synthetic subject, sender, and body.",
+    "delivery_semantics_note": "The screenshots demonstrate one successful delivered attempt. They do not claim exactly-once delivery."
+  },
+  "screenshots": [
+    {
+      "file": "route.webp",
+      "source_url": "https://app.mailwebhook.com/ui/routes/[redacted-route-id]/edit",
+      "page_placement": "Manual setup / route configuration",
+      "caption": "Cropped sections from the current route modal show the enabled Slack test route, redacted destination, and JSON configuration area used for the synthetic Slack delivery.",
+      "alt": "Cropped sections from the current MailWebhook Edit Route modal showing the synthetic route name, redacted Slack endpoint, enabled route toggle, and Rule and Pipeline JSON editor.",
+      "redactions": [
+        "Live Slack incoming-webhook URL replaced with Slack test endpoint [redacted URL].",
+        "Route UUID omitted from the public asset manifest.",
+        "Route list background cropped out so unrelated endpoints and tokens are not visible.",
+        "The asset stacks cropped sections from the same current MailWebhook Edit Route modal to keep the route configuration legible on mobile.",
+        "Synthetic route fields retained: example.com, hello from mailwebhook, x-test, and ui."
+      ],
+      "dimensions": {
+        "width": 620,
+        "height": 687
+      }
+    },
+    {
+      "file": "result.webp",
+      "source_url": "https://app.slack.com/client/[redacted-workspace]/[redacted-channel]",
+      "page_placement": "Verify the result / Slack channel result",
+      "caption": "Slack shows the MailWebhook app message with the same synthetic subject, sender, and body used by the route test event.",
+      "alt": "Slack channel message from the MailWebhook app showing the synthetic subject Hello from mailwebhook, sender tester@example.com, and test body.",
+      "redactions": [
+        "Slack sidebar, member list, composer, account controls, and unrelated channel messages cropped out.",
+        "Only synthetic MailWebhook test content is visible.",
+        "Message timestamp retained to record the test event and result relationship.",
+        "Slack workspace and channel identifiers omitted from the public asset manifest."
+      ],
+      "dimensions": {
+        "width": 430,
+        "height": 104
+      }
+    }
+  ]
+}
