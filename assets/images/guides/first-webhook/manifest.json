@@ -1,7 +1,7 @@
 {
-  "capture_date": "2026-09-06",
+  "capture_date": "2026-09-07",
   "capture_timezone": "Europe/Madrid",
-  "capture_tool": "Codex in-app browser with local ImageMagick redaction and WebP conversion",
+  "capture_tool": "Codex in-app browser with full-page capture, local ImageMagick redaction, and WebP conversion",
   "app_url": "https://app.mailwebhook.com",
   "product_revision": {
     "value": null,
@@ -44,6 +44,7 @@
       "alt": "Event Details modal showing a delivered first-webhook test event and successful response inspection.",
       "redactions": [
         "Route name replaced with First Webhook Test.",
+        "Attempt count replaced with a single-attempt first-delivery example.",
         "Message-Id, subject, sender, and recipient replaced with synthetic values.",
         "Response payload replaced with synthetic status, idempotency key, and signature values."
       ],
