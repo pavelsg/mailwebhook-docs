@@ -72,6 +72,39 @@ Do not verify against parsed JSON, pretty-printed JSON, decoded text, a request 
 
 Use a replay window that matches your system's tolerance for delayed delivery attempts. A common starting point is 300 seconds.
 
+## Verify the shared fixture in the browser
+
+Use the [HMAC Signature Verifier](https://tools.mailwebhook.com/tools/hmac-signature-verifier) when you want to check the signature contract before writing receiver code. Choose **MailWebhook signature** mode. That mode signs `timestamp + "." + raw body` and compares the result with the base64 `v1` value from `X-MailWebhook-Signature`.
+
+Click **Load MailWebhook example**. The tool loads the same synthetic fixture that this docs site keeps under [`/assets/examples/signatures/`](/assets/examples/signatures/manifest.json).
+
+Expected result with the fixed sample clock:
+
+| Field | Expected value |
+| --- | --- |
+| Signature result | `Verified` |
+| Timestamp status | `Fresh` |
+| Delivery decision | `Accepted delivery` |
+| `kid` | `mw_test_kid_v1` |
+| Signature timestamp | `1700000000` (`2023-11-14T22:13:20Z`) |
+| Verification time | `1700000120` (`2023-11-14T22:15:20Z`) |
+| Tolerance | `300` seconds |
+
+Then click **Use current time**. The same historical sample should remain cryptographically `Verified`, but its timestamp status should change to `Stale`, and the delivery decision should say it is not a current accepted delivery.
+
+Append one space to the raw body and verify again. The result should change to `Signature mismatch`, because the exact body bytes changed.
+
+Fixture provenance:
+
+- Fixture version: `mailwebhook-signature-v1`
+- Source commit: `3e11346ba25e5181cfb4f103b0a8ca558fa580ca` in `mailwebhookhq/examples`
+- Body file: [`mailwebhook-body-v1.json`](/assets/examples/signatures/mailwebhook-body-v1.json)
+- Fixture manifest: [`mailwebhook-signature-v1.json`](/assets/examples/signatures/mailwebhook-signature-v1.json)
+- Provenance manifest: [`manifest.json`](/assets/examples/signatures/manifest.json)
+- Body SHA-256: `db71198e31397a66e7cead6e77a841ea1f98c25f5ea58fbbb423de6fe5e11445`
+
+The fixture secret is synthetic and test-only. In production, use the route signing secret selected by `kid`. That secret is separate from MailWebhook API keys, endpoint custom headers, and mailbox provider credentials.
+
 ## Python verifier
 
 This example expects `body` to be the raw request body bytes and `secrets_by_kid` to map key ids to secret bytes.
@@ -242,6 +275,7 @@ Use **Events** and **Delivery Attempts History** when you need to inspect delive
 - [Webhook retries and replay]
 - [Webhook payload reference]
 - [Send a test email and inspect the payload]
+- [HMAC Signature Verifier](https://tools.mailwebhook.com/tools/hmac-signature-verifier)
 - [Receive your first inbound email webhook]
 
 [Endpoints]: {% link docs/endpoints.md %}
