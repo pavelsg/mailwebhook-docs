@@ -13,6 +13,7 @@ Use recipes when you want a practical workflow pattern instead of a reference pa
 Notification recipes:
 
 - [Send inbound email to Slack]
+- [Send Gmail label messages to Slack]
 - [Send inbound email alerts to Telegram]
 
 Workflow recipes:
@@ -28,6 +29,7 @@ References used across recipes:
 - [Signed delivery]
 
 [Send inbound email to Slack]: {% link docs/recipes/slack-email-webhooks.md %}
+[Send Gmail label messages to Slack]: {% link docs/recipes/slack-email-webhooks.md %}#gmail-label-to-slack
 [Send inbound email alerts to Telegram]: {% link docs/recipes/telegram-email-alerts.md %}
 [Turn support emails into ticket webhooks]: {% link docs/recipes/support-ticket-webhooks.md %}
 [Send lead emails to a CRM webhook]: {% link docs/recipes/crm-lead-email-webhook.md %}

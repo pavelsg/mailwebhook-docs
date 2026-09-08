@@ -101,7 +101,7 @@ After the OAuth flow completes, check:
 - Your route pipeline uses the mapper you want, such as `map.generic_json`.
 - Your endpoint returns `2xx` only after it accepts the request.
 
-If you configured a Gmail label ID, send or move a new message so it has that label after setup. Live Gmail sync uses the stored label filter.
+If you configured a Gmail label ID, send a new message that receives that label as it arrives. Live Gmail sync uses the stored label filter. Use Gmail backfill for older labeled messages.
 
 ## Verify payload and delivery
 
@@ -152,7 +152,7 @@ The exact payload depends on your route pipeline. See [Webhook payload reference
 
 ## Send Gmail messages to Slack
 
-After Gmail events are arriving in MailWebhook, use [Send Gmail messages to Slack] to route selected Gmail messages into a Slack channel. Start with a narrow route rule and confirm the MailWebhook event before checking the Slack result.
+After Gmail events are arriving in MailWebhook, use [Send Gmail messages to Slack] to route label-scoped Gmail messages into a Slack channel. Start with a narrow route rule, test with a new labeled message, and confirm the MailWebhook event before checking the Slack result.
 
 ## Backfill older Gmail messages
 
@@ -205,6 +205,7 @@ If you need to inspect provider-real message fields, send a normal email to the 
 - [Webhook payload reference]
 - [Generic JSON]
 - [Webhook retries and replay]
+- [Troubleshoot Gmail label filtering]
 - [Gmail to webhook]
 
 [Mailboxes]: {% link docs/mailboxes.md %}
@@ -216,5 +217,6 @@ If you need to inspect provider-real message fields, send a normal email to the 
 [Webhook payload reference]: {% link docs/payloads/webhook-payload-reference.md %}
 [Generic JSON]: {% link docs/routes/pipeline/generic_json.md %}
 [Webhook retries and replay]: {% link docs/delivery/retries-and-replay.md %}
-[Send Gmail messages to Slack]: {% link docs/recipes/slack-email-webhooks.md %}
+[Troubleshoot Gmail label filtering]: {% link docs/troubleshooting/gmail-label-issues.md %}
+[Send Gmail messages to Slack]: {% link docs/recipes/slack-email-webhooks.md %}#gmail-label-to-slack
 [Gmail to webhook]: https://www.mailwebhook.com/gmail-to-webhook
