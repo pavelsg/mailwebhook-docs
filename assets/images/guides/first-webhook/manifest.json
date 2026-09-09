@@ -1,0 +1,57 @@
+{
+  "capture_date": "2026-09-09",
+  "capture_timezone": "Europe/Madrid",
+  "capture_tool": "Codex built-in browser with live app capture, local ImageMagick cropping, redaction review, and WebP conversion",
+  "app_url": "https://app.mailwebhook.com",
+  "product_revision": {
+    "value": null,
+    "note": "The live app UI and checked response headers did not expose a deploy or product revision during capture."
+  },
+  "screenshots": [
+    {
+      "file": "mailbox.webp",
+      "source_url": "https://app.mailwebhook.com/ui/onboarding",
+      "page_placement": "Fast path: use Setup Wizard / 1. Choose the mailbox",
+      "caption": "Use the generated loopback mailbox as the receive address before choosing a destination.",
+      "alt": "Setup Wizard Mailbox step showing a generated loopback address and Add button.",
+      "redactions": [
+        "Selected mailbox address replaced with first-test@loopback.mailwebhook.com."
+      ],
+      "dimensions": {
+        "width": 423,
+        "height": 286
+      }
+    },
+    {
+      "file": "endpoint.webp",
+      "source_url": "https://app.mailwebhook.com/ui/onboarding",
+      "page_placement": "Fast path: use Setup Wizard / 2. Save the endpoint",
+      "caption": "Select Test loopback for a UI-only first pass, then confirm the endpoint step is saved before sending email.",
+      "alt": "Setup Wizard Endpoint step showing Test loopback, Slack, Telegram, Configure, and the Save button.",
+      "redactions": [
+        "Final crop excludes the selected mailbox address and any account-specific values."
+      ],
+      "dimensions": {
+        "width": 381,
+        "height": 243
+      }
+    },
+    {
+      "file": "delivery.webp",
+      "source_url": "https://app.mailwebhook.com/ui/events",
+      "page_placement": "Fast path: use Setup Wizard / 4. Inspect the webhook",
+      "caption": "Use Event Details to verify the delivered status, attempt latency, and receiver response.",
+      "alt": "Event Details modal showing a delivered first-webhook test event and successful response inspection.",
+      "redactions": [
+        "Route name replaced with First Webhook Test.",
+        "Attempt count replaced with a single-attempt first-delivery example.",
+        "Message-Id, subject, sender, and recipient replaced with synthetic values.",
+        "Response payload replaced with synthetic status, idempotency key, and signature values."
+      ],
+      "dimensions": {
+        "width": 900,
+        "height": 648
+      }
+    }
+  ]
+}

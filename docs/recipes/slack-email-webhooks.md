@@ -2,7 +2,7 @@
 title: Slack email webhooks
 parent: Recipes
 nav_order: 1
-description: "Send inbound email to Slack with MailWebhook using a mailbox source, route rule, Slack chat endpoint, map.slack_simple pipeline, and delivery checks."
+description: "Send inbound email and Gmail label-scoped messages to Slack with MailWebhook using a mailbox source, route rule, Slack chat endpoint, map.slack_simple pipeline, and delivery checks."
 permalink: /docs/recipes/slack-email-webhooks/
 ---
 
@@ -109,6 +109,13 @@ Check both places:
 
 The delivery is successful in MailWebhook when Slack returns a `2xx` HTTP response.
 
+The Slack channel result should agree with the MailWebhook event: same synthetic subject, sender, and message body. In the captured test, MailWebhook recorded one delivered attempt and Slack displayed the message from the MailWebhook app. The visible body is `This is a synthetic test message.`
+
+<figure>
+  <img src="/assets/images/guides/slack/result.webp" alt="Slack channel message from the MailWebhook app showing the synthetic subject Hello from mailwebhook, sender tester@example.com, and test body." width="430" height="104" loading="lazy">
+  <figcaption>Slack shows the MailWebhook app message with the same synthetic subject, sender, and body used by the route test event.</figcaption>
+</figure>
+
 ## Manual setup
 
 Use this path when you want to configure the endpoint and route JSON directly.
@@ -206,6 +213,14 @@ Use `html_to_text` before the mapper when the source emails are mostly HTML.
 }
 ```
 
+
+A saved route should show cropped sections from the current MailWebhook route modal: the route name, redacted Slack endpoint, enabled state, and Rule & Pipeline JSON editor. The captured test route uses only synthetic sender, recipient, subject, and header values. The screenshot labels the secret destination as `Slack test endpoint [redacted URL]`. The endpoint URL is redacted because Slack webhook URLs and bot tokens are credentials.
+
+<figure>
+  <img src="/assets/images/guides/slack/route.webp" alt="Cropped sections from the current MailWebhook Edit Route modal showing the synthetic route name, redacted Slack endpoint, enabled route toggle, and Rule and Pipeline JSON editor." width="620" height="687" loading="lazy">
+  <figcaption>Cropped sections from the current route modal show the enabled Slack test route, redacted destination, and JSON configuration area used for the synthetic Slack delivery.</figcaption>
+</figure>
+
 ## Endpoint behavior
 
 MailWebhook delivers the route pipeline output as a JSON `POST` request.
@@ -239,6 +254,111 @@ A working Slack route has these signs:
 - The Slack channel shows the message.
 
 If the event is delivered in MailWebhook and Slack still does not show a message, recheck the Slack token, bot channel membership, channel ID, and Slack API response details. Slack API errors can appear even when the HTTP response is successful.
+
+## Send Gmail label messages to Slack
+{: #gmail-label-to-slack }
+
+Use this workflow when a Gmail label marks messages your team should see in Slack. A common case is invoices: Gmail applies an `Invoices` label, MailWebhook watches that Gmail label, and a route sends the matching invoice email to a finance Slack channel.
+
+This section assumes the Slack endpoint and `map.slack_simple` pipeline are already available from [Manual setup](#manual-setup). For the Gmail connection, start with [Connect Gmail as a mailbox source].
+
+### 1. Choose the Gmail label scope
+
+In **Mailboxes**, connect or edit the Gmail mailbox and set **Gmail label ID (optional)**.
+
+Use one of these values:
+
+| Field value | Use it for |
+| --- | --- |
+| `INBOX` | Messages that carry Gmail's inbox label. |
+| A custom Gmail label ID, such as `Label_1` | A workflow label such as invoices, receipts, leads, or support. |
+| Blank | A general Gmail mailbox source with no single-label filter. |
+
+The field expects the Gmail label ID, not the visible label name. If the label name is **Invoices**, confirm the underlying Gmail label ID before using it in MailWebhook.
+
+MailWebhook uses the saved label filter when it establishes the Gmail watch, reads live Gmail history, and runs Gmail backfill.
+
+### 2. Send a synthetic invoice email
+
+Use a new message that receives the watched Gmail label as it arrives. If Gmail applies labels through filters, send a message that matches that Gmail filter.
+
+```text
+From: Vendor Billing <billing@vendor.example>
+To: ap@company.com
+Subject: Invoice INV-1042 from Example Supplies
+
+Hello,
+
+Please review invoice INV-1042 for the September office supply order.
+Amount due: 418.20 USD
+Due date: 2026-09-30
+```
+
+If the message existed before the Gmail mailbox was connected or before the current label filter was saved, use Gmail backfill instead of treating live sync as a historical import. A manual label change on an older message should be verified in **Events** before you rely on it for production routing.
+
+### 3. Configure the Slack route
+
+The Gmail label controls which messages MailWebhook ingests from Gmail. The route rule still controls which ingested Gmail events are sent to Slack.
+
+Use this route JSON for the invoice example:
+
+```json
+{
+  "rule": {
+    "to_emails": ["ap@company.com"],
+    "from_domains": ["vendor.example"],
+    "subject_contains": ["invoice"]
+  },
+  "pipeline": {
+    "steps": [
+      {
+        "name": "html_to_text",
+        "args": {
+          "prefer": "html",
+          "width": 0
+        }
+      },
+      {
+        "name": "map.slack_simple",
+        "args": {
+          "channel": "C0123456789",
+          "prefix": "[Invoices]",
+          "max_chars": 700,
+          "include_from": true
+        }
+      }
+    ]
+  }
+}
+```
+
+Keep `map.slack_simple` as the final pipeline step. Use the Slack channel ID, such as `C0123456789`, in the mapper.
+
+### 4. Check the expected Slack request body
+
+For the synthetic invoice email, the Slack mapper produces a compact JSON body like this:
+
+```json
+{
+  "channel": "C0123456789",
+  "text": "[Invoices] Subject: Invoice INV-1042 from Example Supplies\nFrom: Vendor Billing <billing@vendor.example>\nHello,\n\nPlease review invoice INV-1042 for the September office supply order.\nAmount due: 418.20 USD\nDue date: 2026-09-30"
+}
+```
+
+The visible Slack message should show the same synthetic subject, sender, and body. The Slack result screenshot in [Verify the result](#verify-the-result) shows the expected message shape with a separate synthetic Slack test.
+
+### 5. Validate the branches
+
+Use one unique subject per test so each result is easy to identify in **Events** and Slack.
+
+| Branch | Expected result |
+| --- | --- |
+| New matching Gmail message | MailWebhook creates an event, the invoice Slack route matches, delivery records a `2xx` response, and Slack shows the invoice message. |
+| New Gmail message with the watched label but nonmatching route fields | MailWebhook can ingest the Gmail message, but this Slack route does not match, so no Slack delivery is created for this route. |
+| Route disabled | Disabled routes are skipped during ingestion matching. Re-enable the route before retesting. |
+| Destination rejected | A non-`2xx` HTTP response records a failed delivery attempt. If Slack returns HTTP `2xx` with an `ok: false` JSON body, MailWebhook records HTTP delivery success, but Slack did not accept the message. Check the delivery response body, token, channel ID, and bot channel membership. |
+| Replay | Replay sends the event through delivery again. With Slack `chat.postMessage`, a replay can create another Slack message, so do not treat Slack delivery as exactly once. |
+| Existing labeled mail | Normal live Gmail setup starts from the stored Gmail history cursor. Use Gmail backfill for older labeled mail and verify the imported event before expecting Slack delivery. |
 
 ## Common failure checks
 

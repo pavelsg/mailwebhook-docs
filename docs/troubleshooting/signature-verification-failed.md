@@ -42,6 +42,20 @@ X-MailWebhook-Signature: t=<unix>, kid=<kid>, v1=<base64_hmac_sha256>
 
 Use `kid` to select the route signing secret, compute HMAC-SHA256 over the signed input, base64-decode `v1`, and compare the raw digest bytes with a constant-time comparison.
 
+## Reproduce the contract in the browser
+
+Before debugging framework code, confirm the known-good fixture in the [HMAC Signature Verifier](https://tools.mailwebhook.com/tools/hmac-signature-verifier). Choose **MailWebhook signature** mode and click **Load MailWebhook example**.
+
+With the fixed sample clock, the expected result is `Verified`, `Fresh`, and `Accepted delivery`. The parsed `kid` should be `mw_test_kid_v1`, the signature timestamp should be `1700000000`, and the verification time should be `1700000120` with a `300` second tolerance.
+
+Then click **Use current time**. The same sample should still show a verified signature, but the timestamp should be `Stale` and the delivery should not be treated as current. This separates two different checks: the bytes were signed correctly, and the timestamp is inside your receiver's replay window.
+
+If you append one space to the raw body, the verifier should show `Signature mismatch`. That is the fastest way to prove that whitespace, line endings, JSON formatting, and trimming are part of the signed bytes.
+
+The docs copy of the fixture lives in [`/assets/examples/signatures/manifest.json`](/assets/examples/signatures/manifest.json). It comes from `mailwebhookhq/examples` commit `3e11346ba25e5181cfb4f103b0a8ca558fa580ca`, fixture version `mailwebhook-signature-v1`, with body SHA-256 `db71198e31397a66e7cead6e77a841ea1f98c25f5ea58fbbb423de6fe5e11445`.
+
+If the browser verifier passes the fixture but your receiver fails a real delivery, compare your captured raw body bytes, `X-MailWebhook-Signature` header, `kid` lookup, route signing secret, and server clock. Do not compare against parsed JSON or a formatted log payload.
+
 ## Symptoms
 
 Common symptoms include:
@@ -244,6 +258,7 @@ After the verifier is fixed:
 - [Webhook payload reference]
 - [API keys and attachment downloads]
 - [Send a test email and inspect the payload]
+- [HMAC Signature Verifier](https://tools.mailwebhook.com/tools/hmac-signature-verifier)
 
 [Verify signed webhook deliveries]: {% link docs/delivery/signatures.md %}
 [Webhook delivery failed]: {% link docs/troubleshooting/webhook-delivery-failed.md %}

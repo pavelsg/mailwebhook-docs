@@ -1,0 +1,55 @@
+{
+  "fixture_version": "mailwebhook-signature-v1",
+  "copied_at": "2026-09-08",
+  "source": {
+    "repository": "mailwebhookhq/examples",
+    "remote": "git@github-pavelsg:mailwebhookhq/examples.git",
+    "commit": "3e11346ba25e5181cfb4f103b0a8ca558fa580ca",
+    "path": "inbound-email-receiver/fixtures"
+  },
+  "files": [
+    {
+      "path": "mailwebhook-body-v1.json",
+      "source_path": "inbound-email-receiver/fixtures/mailwebhook-body-v1.json",
+      "bytes": 1452,
+      "sha256": "db71198e31397a66e7cead6e77a841ea1f98c25f5ea58fbbb423de6fe5e11445",
+      "preserve_final_newline": true
+    },
+    {
+      "path": "mailwebhook-signature-v1.json",
+      "source_path": "inbound-email-receiver/fixtures/mailwebhook-signature-v1.json",
+      "bytes": 4177,
+      "sha256": "d68f31432c018a975ffe06b6a687bc1951953a748795f11d63d20486f9b36a15"
+    }
+  ],
+  "signature": {
+    "header_name": "X-MailWebhook-Signature",
+    "header_value": "t=1700000000, kid=mw_test_kid_v1, v1=sb6J+BdzCGqOhPLuWoC/WIB5Er58mGur6vpHidghomA=",
+    "kid": "mw_test_kid_v1",
+    "timestamp": 1700000000,
+    "algorithm": "HMAC-SHA256",
+    "digest_encoding": "base64",
+    "secret": "mw_test_secret_v1_DoNotUseInProduction_2026-09-06",
+    "secret_is_synthetic": true
+  },
+  "verification": {
+    "tool_url": "https://tools.mailwebhook.com/tools/hmac-signature-verifier",
+    "tool_mode": "MailWebhook signature",
+    "fixed_now_seconds": 1700000120,
+    "tolerance_seconds": 300,
+    "expected_fixed_clock": {
+      "signature_status": "verified",
+      "timestamp_status": "fresh",
+      "accept_request": true
+    },
+    "expected_current_clock": {
+      "signature_status": "verified",
+      "timestamp_status": "stale",
+      "accept_request": false
+    },
+    "expected_after_body_mutation": {
+      "signature_status": "signature_mismatch",
+      "accept_request": false
+    }
+  }
+}

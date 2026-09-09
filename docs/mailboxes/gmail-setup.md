@@ -42,11 +42,18 @@ Open **Mailboxes** and click **Add Mailbox**.
 
 1. Set **Provider** to **Gmail**.
 2. Leave **Gmail label ID (optional)** blank unless you want to monitor only one Gmail label.
-3. Click **Connect with Google**.
+3. Click **Add Mailbox** to start the Google OAuth flow.
 4. Complete the Google OAuth consent flow.
 5. Return to MailWebhook and confirm the mailbox appears in **Mailboxes**.
 
 In onboarding or other modal flows, choosing **Gmail** can open the Google OAuth flow in a popup. If the popup is blocked, allow popups for MailWebhook and start the connection again.
+
+Use `INBOX` when you want MailWebhook to watch only new messages that carry Gmail's inbox label. For a custom Gmail label, use the underlying Gmail label ID instead of the display name.
+
+<figure>
+  <img src="/assets/images/guides/gmail/provider-label.webp" alt="Add Mailbox modal with Gmail selected and INBOX entered in the optional Gmail label ID field." width="800" height="658" loading="lazy">
+  <figcaption>Select Gmail and enter a supported label ID such as INBOX when you want MailWebhook to watch only that Gmail label.</figcaption>
+</figure>
 
 ## Gmail label ID field
 
@@ -78,6 +85,11 @@ After Google returns control to MailWebhook, MailWebhook:
 
 New Gmail connections start from the current Gmail history cursor. They do not import older mail during normal setup. Use mailbox backfill when you need messages that arrived before the Gmail mailbox was connected.
 
+<figure>
+  <img src="/assets/images/guides/gmail/connected-mailbox.webp" alt="Mailboxes table excerpt showing a Gmail mailbox row with type gmail and Enabled status." width="1254" height="111" loading="lazy">
+  <figcaption>After OAuth, the Gmail mailbox appears in Mailboxes with type gmail and Enabled status.</figcaption>
+</figure>
+
 ## Setup checks
 
 After the OAuth flow completes, check:
@@ -89,11 +101,18 @@ After the OAuth flow completes, check:
 - Your route pipeline uses the mapper you want, such as `map.generic_json`.
 - Your endpoint returns `2xx` only after it accepts the request.
 
-If you configured a Gmail label ID, send or move a new message so it has that label after setup. Live Gmail sync uses the stored label filter.
+If you configured a Gmail label ID, send a new message that receives that label as it arrives. Live Gmail sync uses the stored label filter. Use Gmail backfill for older labeled messages.
 
 ## Verify payload and delivery
 
 Send a new email to the connected Gmail mailbox. Then open **Events** or **Webhook Preview**.
+
+Use a message that arrives after the Gmail mailbox is connected. That is the setup check for live Gmail sync. Backfill is a separate action for older Gmail messages and should not be used as the first setup check.
+
+<figure>
+  <img src="/assets/images/guides/gmail/received-event.webp" alt="Event Details modal for a delivered Gmail mailbox event with message summary, delivery attempt, latency, HTTP 200 status, and receiver response." width="900" height="623" loading="lazy">
+  <figcaption>A delivered Gmail mailbox event confirms the Gmail route reached the test receiver and returned a successful response.</figcaption>
+</figure>
 
 For a route that uses `map.generic_json`, the payload includes `meta.source` set to `gmail`:
 
@@ -104,9 +123,9 @@ For a route that uses `map.generic_json`, the payload includes `meta.source` set
     "version": "1"
   },
   "event": {
-    "id": "6ff49aa1-7050-4ad1-95d9-2711f2ca7e88",
-    "project_id": "dca29061-c4a7-4687-a8dd-24d2f26548c7",
-    "route_id": "2f3713bf-88cc-46c6-aaa3-ea9d6e9d20f3",
+    "id": "11111111-1111-4111-8111-111111111111",
+    "project_id": "22222222-2222-4222-8222-222222222222",
+    "route_id": "33333333-3333-4333-8333-333333333333",
     "created_at": "2026-06-28T12:00:02Z"
   },
   "message": {
@@ -130,6 +149,10 @@ For a route that uses `map.generic_json`, the payload includes `meta.source` set
 ```
 
 The exact payload depends on your route pipeline. See [Webhook payload reference] for mapper choices and [Generic JSON] for the full default payload contract.
+
+## Send Gmail messages to Slack
+
+After Gmail events are arriving in MailWebhook, use [Send Gmail messages to Slack] to route label-scoped Gmail messages into a Slack channel. Start with a narrow route rule, test with a new labeled message, and confirm the MailWebhook event before checking the Slack result.
 
 ## Backfill older Gmail messages
 
@@ -182,6 +205,7 @@ If you need to inspect provider-real message fields, send a normal email to the 
 - [Webhook payload reference]
 - [Generic JSON]
 - [Webhook retries and replay]
+- [Troubleshoot Gmail label filtering]
 - [Gmail to webhook]
 
 [Mailboxes]: {% link docs/mailboxes.md %}
@@ -193,4 +217,6 @@ If you need to inspect provider-real message fields, send a normal email to the 
 [Webhook payload reference]: {% link docs/payloads/webhook-payload-reference.md %}
 [Generic JSON]: {% link docs/routes/pipeline/generic_json.md %}
 [Webhook retries and replay]: {% link docs/delivery/retries-and-replay.md %}
+[Troubleshoot Gmail label filtering]: {% link docs/troubleshooting/gmail-label-issues.md %}
+[Send Gmail messages to Slack]: {% link docs/recipes/slack-email-webhooks.md %}#gmail-label-to-slack
 [Gmail to webhook]: https://www.mailwebhook.com/gmail-to-webhook

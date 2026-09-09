@@ -30,7 +30,7 @@ Gmail label filtering uses a Gmail label ID, not the visible label display name.
 
 Use `INBOX` when you want messages that carry Gmail's inbox label. Use the exact Gmail label ID for a custom label. Leave the field blank on a new connection when you do not want to restrict the Gmail mailbox to one label.
 
-Normal Gmail setup starts from the current Gmail history cursor. It does not import older labeled mail. Send a new email after setup, or move a new message so it has the intended label after setup, when verifying live sync. Use backfill for older messages.
+Normal Gmail setup starts from the current Gmail history cursor. It does not import older labeled mail. Send a new email that receives the intended label as it arrives when verifying live sync. Use backfill for older messages or messages that were labeled before the current cursor.
 
 Mailbox Preview is not the source of truth for custom Gmail label filtering. The current Gmail preview path lists `INBOX` messages for display and does not apply the saved `label_filter`. Use Events, route checks, and provider-real test mail to verify label-filtered ingestion.
 
@@ -67,7 +67,7 @@ When a Gmail label filter is set, MailWebhook includes that label in Gmail watch
 
 If you set `INBOX`, the message must have Gmail's inbox label. Messages that skip the inbox because of Gmail filters, archive rules, or provider placement are outside an `INBOX`-filtered mailbox.
 
-For custom labels, send or move a new message so it has the label after setup. Then verify with a unique subject.
+For custom labels, send a new message that receives the label as it arrives. Then verify with a unique subject in **Events**.
 
 ### The message existed before the Gmail history cursor
 

@@ -42,6 +42,11 @@ Open the MailWebhook app and go to **Onboarding**. If the modal is closed, click
 
 In **1. Mailbox**, use the generated loopback address or click **Add** to connect a real mailbox.
 
+<figure>
+  <img src="/assets/images/guides/first-webhook/mailbox.webp" alt="Setup Wizard Mailbox step showing a generated loopback address and Add button." width="423" height="286" loading="lazy">
+  <figcaption>Use the generated loopback mailbox as the receive address before choosing a destination.</figcaption>
+</figure>
+
 Supported mailbox sources include:
 
 - Gmail
@@ -59,7 +64,12 @@ In **2. Endpoint**, choose one of these options:
 - **Configure**: paste your public webhook URL.
 - **Test loopback**: use MailWebhook's built-in test destination for a UI-only first pass.
 
-Click **Save**.
+<figure>
+  <img src="/assets/images/guides/first-webhook/endpoint.webp" alt="Setup Wizard Endpoint step showing Test loopback, Slack, Telegram, Configure, and the Save button." width="381" height="243" loading="lazy">
+  <figcaption>Select Test loopback for a UI-only first pass, then confirm the endpoint step is saved before sending email.</figcaption>
+</figure>
+
+Click **Save** when the button is active. With **Test loopback**, the wizard may save automatically; a checkmark on the Save button means the endpoint step is ready.
 
 For an HTTP endpoint, saving this step provisions:
 
@@ -87,6 +97,13 @@ The preview can show:
 - `curl`
 - Python
 - Node.js
+
+When you need the full delivery record, open the delivered event from **Events** and inspect the delivery attempt response.
+
+<figure>
+  <img src="/assets/images/guides/first-webhook/delivery.webp" alt="Event Details modal showing a delivered first-webhook test event and successful response inspection." width="900" height="648" loading="lazy">
+  <figcaption>Use Event Details to verify the delivered status, attempt latency, and receiver response.</figcaption>
+</figure>
 
 For a configured endpoint, your receiver should also see a JSON `POST` request with `Content-Type: application/json`.
 
@@ -223,6 +240,8 @@ A successful first delivery has three signs:
 - The event appears as successful in **Webhook Preview** or **Events**.
 
 Open **Events** to inspect event status, message metadata, and **Delivery Attempts History**.
+
+After you confirm the first delivery, build the receiving service that will handle real webhook requests. Use [Build your application receiver](https://blog.mailwebhook.com/blog/inbound-email-webhook-nodejs-python-go/) for Node.js, Python, and Go examples that accept MailWebhook payloads and verify signed deliveries.
 
 ## Common errors
 

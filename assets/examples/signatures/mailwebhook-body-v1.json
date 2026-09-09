@@ -1,0 +1,53 @@
+{
+  "schema": {
+    "name": "mailwebhook.generic",
+    "version": "1"
+  },
+  "event": {
+    "id": "4a960b96-3d53-45a7-8df1-4e9a4a7f1351",
+    "project_id": "6d61071d-ae9e-4d5d-b5e9-0ac3a14c9fe7",
+    "route_id": "7f75e9c6-1d08-4ed5-9a70-04551cd91e4a",
+    "created_at": "2023-11-14T22:13:20Z"
+  },
+  "message": {
+    "message_id": "<fixture.2026-09-06@mailwebhook.example>",
+    "message_id_type": "original",
+    "subject": "Fixture invoice 1042 – café supplies",
+    "date": "2023-11-14T22:12:54Z",
+    "from": [
+      {
+        "email": "billing@example.test",
+        "name": "Example Billing"
+      }
+    ],
+    "to": [
+      {
+        "email": "ap@example.test",
+        "name": "Accounts Payable"
+      }
+    ],
+    "headers": {
+      "message-id": "<fixture.2026-09-06@mailwebhook.example>",
+      "content-type": "multipart/mixed"
+    }
+  },
+  "body": {
+    "text": "Invoice INV-1042 total €481.92\nPlease review before Friday.\n",
+    "html": "<p>Invoice <strong>INV-1042</strong> total €481.92</p>",
+    "attachments": [
+      {
+        "id": "d78acb4d-7f2e-4c2d-b7d1-9ef9c8d74f51",
+        "filename": "invoice-1042.pdf",
+        "content_type": "application/pdf",
+        "size": 93259,
+        "is_inline": false,
+        "sha256": "059a0f5260487bbe663994de1fd641401fec76ac9f6bddfe5b53ae60d4bb2d86"
+      }
+    ]
+  },
+  "meta": {
+    "source": "hosted",
+    "raw_size_bytes": 26546,
+    "received_at": "2023-11-14T22:13:19Z"
+  }
+}
