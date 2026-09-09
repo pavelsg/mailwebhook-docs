@@ -43,8 +43,8 @@ Open the MailWebhook app and go to **Onboarding**. If the modal is closed, click
 In **1. Mailbox**, use the generated loopback address or click **Add** to connect a real mailbox.
 
 <figure>
-  <img src="/assets/images/guides/first-webhook/mailbox.webp" alt="Setup Wizard modal showing a selected loopback mailbox beside the Webhook Preview panel." width="844" height="410" loading="lazy">
-  <figcaption>The Setup Wizard keeps the selected mailbox and Webhook Preview visible together during the first delivery flow.</figcaption>
+  <img src="/assets/images/guides/first-webhook/mailbox.webp" alt="Setup Wizard Mailbox step showing a generated loopback address and Add button." width="423" height="286" loading="lazy">
+  <figcaption>Use the generated loopback mailbox as the receive address before choosing a destination.</figcaption>
 </figure>
 
 Supported mailbox sources include:
@@ -65,11 +65,11 @@ In **2. Endpoint**, choose one of these options:
 - **Test loopback**: use MailWebhook's built-in test destination for a UI-only first pass.
 
 <figure>
-  <img src="/assets/images/guides/first-webhook/endpoint.webp" alt="Setup Wizard modal showing endpoint provider choices beside the Webhook Preview panel." width="844" height="380" loading="lazy">
-  <figcaption>Select Test loopback for a UI-only first pass, or switch to Configure when your public endpoint is ready.</figcaption>
+  <img src="/assets/images/guides/first-webhook/endpoint.webp" alt="Setup Wizard Endpoint step showing Test loopback, Slack, Telegram, Configure, and the Save button." width="381" height="243" loading="lazy">
+  <figcaption>Select Test loopback for a UI-only first pass, then confirm the endpoint step is saved before sending email.</figcaption>
 </figure>
 
-Click **Save**.
+Click **Save** when the button is active. With **Test loopback**, the wizard may save automatically; a checkmark on the Save button means the endpoint step is ready.
 
 For an HTTP endpoint, saving this step provisions:
 
