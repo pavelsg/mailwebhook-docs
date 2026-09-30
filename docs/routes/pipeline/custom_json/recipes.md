@@ -20,6 +20,9 @@ inside the final `map.custom_json` pipeline step.
 
 For operator details, see the [JsonLogic-style DSL] reference.
 
+{: .note }
+Adapt these recipes to your emails with the [MailWebhook agent skill]({% link docs/routes.md %}#author-routes-with-an-ai-agent). Give your coding agent the recipe, representative email content, and the JSON shape your endpoint expects.
+
 ## Extract the new reply only
 
 Use when: you want the new reply body without quoted history.

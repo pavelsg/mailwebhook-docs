@@ -140,6 +140,8 @@ Set:
 - **Endpoint**: the endpoint you created.
 - **Enable Route**: on.
 
+For custom matching or payloads, the [MailWebhook agent skill]({% link docs/routes.md %}#author-routes-with-an-ai-agent) can help draft your rule and pipeline JSON from your requirements.
+
 Use this **Rule & Pipeline (JSON)** config. Replace `alerts@example.com` with your mailbox address:
 
 ```json

@@ -79,6 +79,9 @@ A route has three parts:
 
 The default pipeline uses `map.generic_json` and emits the [Generic JSON] payload. Attachments are represented as descriptors in the payload. Your backend can request a short-lived attachment download URL through the [API keys and attachment downloads] guide with `X-API-Key`.
 
+{: .note }
+Build routes with your coding agent using the [MailWebhook agent skill]({% link docs/routes.md %}#author-routes-with-an-ai-agent). It helps draft and review matching rules, transform pipelines, and Custom JSON payloads.
+
 ### 4. Send a test email
 
 Send an email to the mailbox address or connected provider mailbox. In onboarding, use **Webhook Preview** to inspect the request, response, `curl`, Python, and Node.js examples for the delivery.

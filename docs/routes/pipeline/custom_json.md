@@ -29,6 +29,9 @@ For product context around structured email payloads, see [Email to JSON](https:
 
 ## How to use it
 
+{: .note }
+Use the [MailWebhook agent skill]({% link docs/routes.md %}#author-routes-with-an-ai-agent) to draft or repair a Custom JSON mapper from representative emails and an expected payload. Include required field types and how missing values should be handled.
+
 Put `map.custom_json` as the final step in a route pipeline:
 
 ```json

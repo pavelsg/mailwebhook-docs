@@ -21,6 +21,9 @@ message. Rules are stored as arbitrary JSON, validated, and compiled into
 predicates. The notes below explain what data is available to a rule, how each
 field behaves, and how to combine matchers.
 
+{: .note }
+Use the [MailWebhook agent skill]({% link docs/routes.md %}#author-routes-with-an-ai-agent) to turn matching requirements into rule JSON or review an existing rule against sample emails. The setup guide includes installation and an example prompt.
+
 ## What a rule sees
 
 Before matching, the inbound email is normalized into a dictionary:

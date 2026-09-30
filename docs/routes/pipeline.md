@@ -23,6 +23,9 @@ rule matches an incoming email. It consumes the parsed message plus route
 context and emits a JSON payload; that payload is posted verbatim to the route's
 endpoint.
 
+{: .note }
+Use the [MailWebhook agent skill]({% link docs/routes.md %}#author-routes-with-an-ai-agent) to draft or review a pipeline from sample emails and your expected webhook payload. It covers transform steps, terminal mappers, and Custom JSON expressions.
+
 The default step is `map.generic_json`, which emits the deterministic
 `mailwebhook.generic@1` shape described in [Generic JSON]. Attachments stay out
 of the HTTP body and only their metadata is included, keeping delivery fast and

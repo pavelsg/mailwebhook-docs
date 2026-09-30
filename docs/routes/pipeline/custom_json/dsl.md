@@ -20,6 +20,9 @@ complete JsonLogic implementation: MailWebhook supports a focused operator set,
 adds MailWebhook-specific helpers under `call.*`, and reserves scoped blocks for
 local variables inside templates.
 
+{: .note }
+Use the [MailWebhook agent skill]({% link docs/routes.md %}#author-routes-with-an-ai-agent) to write or review Custom JSON expressions using MailWebhook's supported operators and extraction helpers. Include the mapper and sample input when asking it to diagnose an error.
+
 ## Expressions
 
 An expression is usually a single-key object:

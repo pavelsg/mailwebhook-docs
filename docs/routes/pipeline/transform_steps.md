@@ -18,6 +18,9 @@ Transform steps run before the final `map.*` step and return a modified message
 for later steps. Use them to normalize HTML, redact fields, rewrite values, or
 drop attachments before the payload is mapped.
 
+{: .note }
+Use the [MailWebhook agent skill]({% link docs/routes.md %}#author-routes-with-an-ai-agent) to choose and configure transform steps for your pipeline. Include a sample email and describe the fields or attachments you want to normalize, change, or remove.
+
 Built-in non-terminal steps:
 
 | Step | Use it for |
