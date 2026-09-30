@@ -244,6 +244,108 @@
           }
         }
       },
+      "project_signing_secret_activate_response": {
+        "summary": "Activate project signing-secret rotation response",
+        "value": {
+          "retired_kid": "kid_active_123",
+          "signing_secret": {
+            "activated_at": "2026-09-14T12:35:00Z",
+            "created_at": "2026-09-14T12:30:00Z",
+            "kid": "kid_pending_456",
+            "not_after": null,
+            "not_before": "2026-09-14T12:30:00Z",
+            "retired_at": null,
+            "state": "active"
+          },
+          "updated_route_count": 2
+        }
+      },
+      "project_signing_secret_discard_response": {
+        "summary": "Discard pending signing-secret response (204 no content)",
+        "value": null
+      },
+      "project_signing_secret_invalid_request_error": {
+        "summary": "Invalid project signing-secret request",
+        "value": {
+          "error": {
+            "code": "project_signing_secret.invalid_request",
+            "details": {},
+            "message": "kid must not be empty"
+          }
+        }
+      },
+      "project_signing_secret_metadata_response": {
+        "summary": "Project signing-secret metadata response",
+        "value": {
+          "active": {
+            "activated_at": "2026-09-14T12:00:00Z",
+            "created_at": "2026-09-14T12:00:00Z",
+            "kid": "kid_active_123",
+            "not_after": null,
+            "not_before": "2026-09-14T12:00:00Z",
+            "retired_at": null,
+            "state": "active"
+          },
+          "pending": {
+            "activated_at": null,
+            "created_at": "2026-09-14T12:30:00Z",
+            "kid": "kid_pending_456",
+            "not_after": null,
+            "not_before": "2026-09-14T12:30:00Z",
+            "retired_at": null,
+            "state": "pending"
+          }
+        }
+      },
+      "project_signing_secret_not_found_error": {
+        "summary": "Project signing secret not found",
+        "value": {
+          "error": {
+            "code": "project_signing_secret.not_found",
+            "details": {},
+            "message": "Project signing secret not found"
+          }
+        }
+      },
+      "project_signing_secret_pending_exists_error": {
+        "summary": "Pending project signing-secret rotation exists",
+        "value": {
+          "error": {
+            "code": "project_signing_secret.pending_exists",
+            "details": {},
+            "message": "Pending signing-secret rotation already exists"
+          }
+        }
+      },
+      "project_signing_secret_pending_not_found_error": {
+        "summary": "Pending project signing-secret rotation not found",
+        "value": {
+          "error": {
+            "code": "project_signing_secret.pending_not_found",
+            "details": {},
+            "message": "Pending signing-secret rotation not found"
+          }
+        }
+      },
+      "project_signing_secret_rotate_request": {
+        "summary": "Create pending signing-secret rotation request",
+        "value": {}
+      },
+      "project_signing_secret_rotate_response": {
+        "summary": "Pending signing-secret rotation response with one-time secret",
+        "value": {
+          "secret": "example_one_time_signing_secret_value",
+          "signing_secret": {
+            "activated_at": null,
+            "created_at": "2026-09-14T12:30:00Z",
+            "kid": "kid_pending_456",
+            "not_after": null,
+            "not_before": "2026-09-14T12:30:00Z",
+            "retired_at": null,
+            "state": "pending"
+          }
+        }
+      },
       "signature_header": {
         "summary": "Signature header example",
         "value": "t=1710000000, kid=dev-kid, v1=BASE64_HMAC_BYTES"
@@ -811,6 +913,11 @@
       },
       "Body_signup_post_auth_signup_post": {
         "properties": {
+          "attribution_state": {
+            "default": "",
+            "title": "Attribution State",
+            "type": "string"
+          },
           "csrf_token": {
             "default": "",
             "title": "Csrf Token",
@@ -1343,6 +1450,50 @@
           }
         },
         "title": "Body_ui_project_api_key_reset_ui_project_api_key_reset_post",
+        "type": "object"
+      },
+      "Body_ui_project_signing_secret_activate_ui_project_signing_secret_activate_post": {
+        "properties": {
+          "password": {
+            "default": "",
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "title": "Body_ui_project_signing_secret_activate_ui_project_signing_secret_activate_post",
+        "type": "object"
+      },
+      "Body_ui_project_signing_secret_discard_ui_project_signing_secret_pending_discard_post": {
+        "properties": {
+          "password": {
+            "default": "",
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "title": "Body_ui_project_signing_secret_discard_ui_project_signing_secret_pending_discard_post",
+        "type": "object"
+      },
+      "Body_ui_project_signing_secret_rotate_ui_project_signing_secret_rotate_post": {
+        "properties": {
+          "kid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kid"
+          },
+          "password": {
+            "default": "",
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "title": "Body_ui_project_signing_secret_rotate_ui_project_signing_secret_rotate_post",
         "type": "object"
       },
       "Body_ui_routes_create_ui_routes_new_post": {
@@ -2482,6 +2633,10 @@
       },
       "MailboxItem": {
         "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
           "folder": {
             "title": "Folder",
             "type": "string"
@@ -2544,6 +2699,7 @@
           "use_ssl",
           "username",
           "folder",
+          "enabled",
           "status",
           "poll_interval_s",
           "updated_at"
@@ -2808,6 +2964,54 @@
         ],
         "title": "NotificationReplayResponse",
         "type": "object"
+      },
+      "OnboardingSampleDeliveryRequest": {
+        "additionalProperties": false,
+        "description": "Request payload for controlled manual onboarding sample delivery.\n\nAttributes:\n    event_id: Selected sample-capture event identifier.\n    selected_shape: Server-owned payload shape to deliver.",
+        "properties": {
+          "event_id": {
+            "format": "uuid",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "selected_shape": {
+            "$ref": "#/components/schemas/OnboardingSelectedShape"
+          }
+        },
+        "required": [
+          "event_id",
+          "selected_shape"
+        ],
+        "title": "OnboardingSampleDeliveryRequest",
+        "type": "object"
+      },
+      "OnboardingSamplePreviewRequest": {
+        "additionalProperties": false,
+        "description": "Request payload for loading one selected onboarding preview event.\n\nAttributes:\n    event_id: Selected preview event identifier from the onboarding timeline.\n    include_suggestion: Whether to generate/execute the suggested shape in\n        this response. Callers may set this to ``False`` to render Generic\n        immediately and fetch Suggested in a follow-up request.",
+        "properties": {
+          "event_id": {
+            "format": "uuid",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "include_suggestion": {
+            "default": true,
+            "title": "Include Suggestion",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "event_id"
+        ],
+        "title": "OnboardingSamplePreviewRequest",
+        "type": "object"
+      },
+      "OnboardingSelectedShape": {
+        "enum": [
+          "generic",
+          "suggested"
+        ],
+        "type": "string"
       },
       "OnboardingTestFlowLifecycleRequest": {
         "additionalProperties": false,
@@ -3279,6 +3483,106 @@
         "title": "ProjectItem",
         "type": "object"
       },
+      "ProjectSigningSecretActivateResponse": {
+        "description": "Response envelope for activating a pending signing-secret rotation.\n\nAttributes:\n    signing_secret: Newly active signing-secret metadata.\n    retired_kid: KID retired by activation, if one existed.\n    updated_route_count: Number of project routes updated to the new KID.",
+        "properties": {
+          "retired_kid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retired Kid"
+          },
+          "signing_secret": {
+            "$ref": "#/components/schemas/SigningSecretMetadataOut"
+          },
+          "updated_route_count": {
+            "minimum": 0.0,
+            "title": "Updated Route Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "signing_secret",
+          "retired_kid",
+          "updated_route_count"
+        ],
+        "title": "ProjectSigningSecretActivateResponse",
+        "type": "object"
+      },
+      "ProjectSigningSecretResponse": {
+        "description": "Response envelope for project signing-secret state.\n\nAttributes:\n    active: Active project signing-secret metadata, if present.\n    pending: Pending rotation metadata, if present.",
+        "properties": {
+          "active": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SigningSecretMetadataOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pending": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SigningSecretMetadataOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "active",
+          "pending"
+        ],
+        "title": "ProjectSigningSecretResponse",
+        "type": "object"
+      },
+      "ProjectSigningSecretRotateRequest": {
+        "additionalProperties": false,
+        "description": "Request body for creating a pending signing-secret rotation.\n\nAttributes:\n    kid: Optional caller-provided KID for the pending secret.",
+        "properties": {
+          "kid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional signing-secret KID. Omit to generate one automatically.",
+            "title": "Kid"
+          }
+        },
+        "title": "ProjectSigningSecretRotateRequest",
+        "type": "object"
+      },
+      "ProjectSigningSecretRotateResponse": {
+        "description": "Response envelope for creating a pending signing-secret rotation.\n\nAttributes:\n    signing_secret: Pending signing-secret metadata.\n    secret: One-time plaintext signing secret. This is returned only once.",
+        "properties": {
+          "secret": {
+            "title": "Secret",
+            "type": "string"
+          },
+          "signing_secret": {
+            "$ref": "#/components/schemas/SigningSecretMetadataOut"
+          }
+        },
+        "required": [
+          "signing_secret",
+          "secret"
+        ],
+        "title": "ProjectSigningSecretRotateResponse",
+        "type": "object"
+      },
       "RemainingInfo": {
         "properties": {
           "monthly_bytes_out": {
@@ -3352,15 +3656,21 @@
             "$ref": "#/components/schemas/RouteRule"
           },
           "signing_secret_kid": {
-            "minLength": 1,
-            "title": "Signing Secret Kid",
-            "type": "string"
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signing Secret Kid"
           }
         },
         "required": [
           "name",
           "endpoint_id",
-          "signing_secret_kid",
           "rule",
           "pipeline"
         ],
@@ -3583,8 +3893,94 @@
         "title": "RouteUpdate",
         "type": "object"
       },
+      "SigningSecretMetadataOut": {
+        "description": "Public signing-secret metadata without plaintext or encrypted values.\n\nAttributes:\n    kid: Public key identifier used in signature headers.\n    state: Lifecycle state of the signing-secret row.\n    created_at: Timestamp when the row was created.\n    not_before: Start of the delivery signing window.\n    not_after: Optional end of the delivery signing window.\n    activated_at: Timestamp when the secret became active.\n    retired_at: Timestamp when the secret was retired.",
+        "properties": {
+          "activated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activated At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "kid": {
+            "title": "Kid",
+            "type": "string"
+          },
+          "not_after": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Not After"
+          },
+          "not_before": {
+            "format": "date-time",
+            "title": "Not Before",
+            "type": "string"
+          },
+          "retired_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retired At"
+          },
+          "state": {
+            "enum": [
+              "active",
+              "pending",
+              "retired"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kid",
+          "state",
+          "created_at",
+          "not_before",
+          "not_after",
+          "activated_at",
+          "retired_at"
+        ],
+        "title": "SigningSecretMetadataOut",
+        "type": "object"
+      },
       "UpdateMailboxRequest": {
         "properties": {
+          "enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enabled"
+          },
           "folder": {
             "anyOf": [
               {
@@ -3718,6 +4114,13 @@
       },
       "ValidationError": {
         "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
           "loc": {
             "items": {
               "anyOf": [
@@ -4902,6 +5305,325 @@
         ]
       }
     },
+    "/v1/project/signing-secret": {
+      "get": {
+        "description": "Return active and pending signing-secret metadata for the authenticated project.\n\nArgs:\n    ctx: Project context resolved from the current ``X-API-Key``.\n\nReturns:\n    Active and pending metadata. Plaintext secret material is never returned.",
+        "operationId": "get_project_signing_secret_endpoint_v1_project_signing_secret_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "active": {
+                    "activated_at": "2026-09-14T12:00:00Z",
+                    "created_at": "2026-09-14T12:00:00Z",
+                    "kid": "kid_active_123",
+                    "not_before": "2026-09-14T12:00:00Z",
+                    "state": "active"
+                  },
+                  "pending": {
+                    "created_at": "2026-09-14T12:30:00Z",
+                    "kid": "kid_pending_456",
+                    "not_before": "2026-09-14T12:30:00Z",
+                    "state": "pending"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectSigningSecretResponse"
+                }
+              }
+            },
+            "description": "Return active and pending project signing-secret metadata."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "auth.invalid_api_key",
+                    "details": {},
+                    "message": "Invalid or disabled API key"
+                  }
+                }
+              }
+            },
+            "description": "Missing, invalid, or disabled API key."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "project_signing_secret.not_found",
+                    "details": {},
+                    "message": "Project signing secret not found"
+                  }
+                }
+              }
+            },
+            "description": "Project signing secret was not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Project Signing Secret Endpoint",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/project/signing-secret/activate": {
+      "post": {
+        "description": "Activate the pending signing-secret rotation for the authenticated project.\n\nArgs:\n    ctx: Project context resolved from the current ``X-API-Key``.\n\nReturns:\n    Activation metadata without plaintext secret material.",
+        "operationId": "activate_project_signing_secret_endpoint_v1_project_signing_secret_activate_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "retired_kid": "kid_active_123",
+                  "signing_secret": {
+                    "activated_at": "2026-09-14T12:35:00Z",
+                    "created_at": "2026-09-14T12:30:00Z",
+                    "kid": "kid_pending_456",
+                    "not_before": "2026-09-14T12:30:00Z",
+                    "state": "active"
+                  },
+                  "updated_route_count": 2
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectSigningSecretActivateResponse"
+                }
+              }
+            },
+            "description": "Activate the pending signing secret and update project routes."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "auth.invalid_api_key",
+                    "details": {},
+                    "message": "Invalid or disabled API key"
+                  }
+                }
+              }
+            },
+            "description": "Missing, invalid, or disabled API key."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "project_signing_secret.pending_not_found",
+                    "details": {},
+                    "message": "Pending signing-secret rotation not found"
+                  }
+                }
+              }
+            },
+            "description": "Pending signing-secret rotation was not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Activate Project Signing Secret Endpoint",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/project/signing-secret/pending": {
+      "delete": {
+        "description": "Discard the pending signing-secret rotation for the authenticated project.\n\nArgs:\n    ctx: Project context resolved from the current ``X-API-Key``.\n\nReturns:\n    Empty ``204 No Content`` response after the pending rotation is retired.",
+        "operationId": "discard_pending_project_signing_secret_endpoint_v1_project_signing_secret_pending_delete",
+        "responses": {
+          "204": {
+            "description": "Discarded the pending signing-secret rotation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "auth.invalid_api_key",
+                    "details": {},
+                    "message": "Invalid or disabled API key"
+                  }
+                }
+              }
+            },
+            "description": "Missing, invalid, or disabled API key."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "project_signing_secret.pending_not_found",
+                    "details": {},
+                    "message": "Pending signing-secret rotation not found"
+                  }
+                }
+              }
+            },
+            "description": "Pending signing-secret rotation was not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Discard Pending Project Signing Secret Endpoint",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/project/signing-secret/rotate": {
+      "post": {
+        "description": "Create a pending signing-secret rotation for the authenticated project.\n\nArgs:\n    payload: Optional KID request. Omitting the body generates a KID.\n    ctx: Project context resolved from the current ``X-API-Key``.\n\nReturns:\n    Pending signing-secret metadata and one-time plaintext secret.",
+        "operationId": "rotate_project_signing_secret_endpoint_v1_project_signing_secret_rotate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "generated_kid": {
+                  "summary": "Rotate with a generated KID",
+                  "value": {}
+                }
+              },
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ProjectSigningSecretRotateRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "secret": "example_one_time_signing_secret_value",
+                  "signing_secret": {
+                    "created_at": "2026-09-14T12:30:00Z",
+                    "kid": "kid_pending_456",
+                    "not_before": "2026-09-14T12:30:00Z",
+                    "state": "pending"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectSigningSecretRotateResponse"
+                }
+              }
+            },
+            "description": "Create a pending signing-secret rotation and return the secret once."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "project_signing_secret.invalid_request",
+                    "details": {},
+                    "message": "kid must not be empty"
+                  }
+                }
+              }
+            },
+            "description": "Invalid signing-secret rotation request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "auth.invalid_api_key",
+                    "details": {},
+                    "message": "Invalid or disabled API key"
+                  }
+                }
+              }
+            },
+            "description": "Missing, invalid, or disabled API key."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "project_signing_secret.not_found",
+                    "details": {},
+                    "message": "Project signing secret not found"
+                  }
+                }
+              }
+            },
+            "description": "Active signing secret was not found."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "project_signing_secret.pending_exists",
+                    "details": {},
+                    "message": "Pending signing-secret rotation already exists"
+                  }
+                }
+              }
+            },
+            "description": "A pending signing-secret rotation already exists."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rotate Project Signing Secret Endpoint",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
     "/v1/routes": {
       "get": {
         "operationId": "list_routes_v1_routes_get",
@@ -5139,7 +5861,7 @@
     }
   ],
   "x-mailwebhook-public-api": {
-    "operation_count": 23,
+    "operation_count": 27,
     "scope_version": "2026-05-01"
   }
 }
